@@ -8,6 +8,9 @@ import {
   CardTitle
 } from '@/components/ui/card'
 import { useNavigate } from 'react-router-dom'
+import productpng from '../assets/Product.png'
+import categorypng from '../assets/Category.png'
+import movementpng from '../assets/Movement.jpeg'
 
 const Home = () => {
   const navigate = useNavigate()
@@ -23,7 +26,7 @@ const Home = () => {
         <Card className='bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300'>
           <CardHeader className='relative'>
             <img
-              src='https://th.bing.com/th/id/R.5c3355f01409e993d58a79b18f74f1e6?rik=kiNfKEvp%2fs6yPg&riu=http%3a%2f%2fcdn.onlinewebfonts.com%2fsvg%2fimg_117575.png&ehk=FEV1Z7N3B94xe%2bcwxiNaNkFOB%2bt%2f6aQTEBh6EjSIUl8%3d&risl=&pid=ImgRaw&r=0'
+              src={productpng}
               alt='Elegant Watch'
               className='w-full h-48 object-cover'
             />
@@ -46,7 +49,7 @@ const Home = () => {
         <Card className='bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300'>
           <CardHeader className='relative'>
             <img
-              src='https://th.bing.com/th/id/R.b320ea7bcab3b9e4daf93d192206ac51?rik=jnA4JcDFN6PPPw&pid=ImgRaw&r=0'
+              src={movementpng}
               alt='Elegant Watch'
               className='w-full h-48 object-cover'
             />
@@ -69,7 +72,7 @@ const Home = () => {
         <Card className='bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300'>
           <CardHeader className='relative'>
             <img
-              src='https://th.bing.com/th/id/R.75d6c7ec078e5e3abc66aed300a973aa?rik=xDMqFXXO5RhYPQ&pid=ImgRaw&r=0'
+              src={categorypng}
               alt='Elegant Watch'
               className='w-full h-48 object-cover'
             />
