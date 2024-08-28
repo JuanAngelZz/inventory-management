@@ -60,8 +60,7 @@ const LoginForm = () => {
             />
             <p className='text-red-500 text-center'>{errors?.error}</p>
           </CardContent>
-          <CardFooter className='flex justify-between'>
-            <Button variant='outline'>Cancel</Button>
+          <CardFooter className='flex justify-end'>
             <Button type='submit'>Submit</Button>
           </CardFooter>
         </Card>

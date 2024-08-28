@@ -8,14 +8,25 @@ import {
 } from '../controllers/product.controller'
 import { partialValidate, validateSchema } from '../middlewares/validateSchema'
 import { productSchema } from '../schemas/product.schema'
+import { validateToken } from '../middlewares/validateToken'
 
 const router = Router()
 
-router.get('/products', getProducts)
-router.post('/products', validateSchema(productSchema), createProduct)
+router.get('/products', validateToken, getProducts)
+router.post(
+  '/products',
+  validateToken,
+  validateSchema(productSchema),
+  createProduct
+)
 
-router.get('/products/:id', getProduct)
-router.put('/products/:id', partialValidate(productSchema), updateProduct)
-router.delete('/products/:id', deleteProduct)
+router.get('/products/:id', validateToken, getProduct)
+router.put(
+  '/products/:id',
+  validateToken,
+  partialValidate(productSchema),
+  updateProduct
+)
+router.delete('/products/:id', validateToken, deleteProduct)
 
 export default router
