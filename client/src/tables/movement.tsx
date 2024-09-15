@@ -83,20 +83,20 @@ export const movementColumns: ColumnDef<Movement>[] = [
     }
   },
   {
-    accessorKey: 'producto_id',
+    accessorKey: 'producto_nombre',
     header: ({ column }) => {
       return (
         <Button
           variant='ghost'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Producto ID
+          Producto
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       )
     },
     cell: ({ row }) => {
-      return <p className='text-center'>{row.getValue('producto_id')}</p>
+      return <p className='text-center'>{row.getValue('producto_nombre')}</p>
     }
   },
   {

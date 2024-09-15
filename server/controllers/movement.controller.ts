@@ -8,7 +8,11 @@ export const getMovements = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const query = 'SELECT * FROM movimientos'
+  const query = `
+    SELECT movimientos.*, productos.nombre AS producto_nombre 
+    FROM movimientos
+    JOIN productos ON movimientos.producto_id = productos.id
+  `
 
   try {
     const [rows] = await conn.query<RowDataPacket[]>(query)
@@ -22,6 +26,7 @@ export const getMovements = async (
 
     return res.json(movements)
   } catch (error) {
+    console.log(error)
     return res.status(500).json({ error })
   }
 }

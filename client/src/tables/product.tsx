@@ -66,7 +66,7 @@ export const productColumns: ColumnDef<Product>[] = [
     }
   },
   {
-    accessorKey: 'categoria_id',
+    accessorKey: 'categoria_nombre',
     header: ({ column }) => {
       return (
         <Button
@@ -79,7 +79,7 @@ export const productColumns: ColumnDef<Product>[] = [
       )
     },
     cell: ({ row }) => {
-      return <p className='text-center'>{row.getValue('categoria_id')}</p>
+      return <p className='text-center'>{row.getValue('categoria_nombre')}</p>
     }
   },
   {

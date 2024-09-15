@@ -14,6 +14,7 @@ export interface Product {
   fecha_adquisicion: string
   fecha_vencimiento: string
   categoria_id: number
+  categoria_nombre: string
 }
 
 export interface Movement {
@@ -22,6 +23,7 @@ export interface Movement {
   cantidad: number
   fecha: Date
   producto_id: number
+  producto_nombre: string
 }
 
 export interface Category {

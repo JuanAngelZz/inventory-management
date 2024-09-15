@@ -8,7 +8,11 @@ export const getProducts = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const query = 'SELECT * FROM productos'
+  const query = `
+    SELECT productos.*, categorias.nombre AS categoria_nombre
+    FROM productos
+    JOIN categorias ON productos.categoria_id = categorias.id
+  `
 
   try {
     const [rows] = await conn.query<RowDataPacket[]>(query)
