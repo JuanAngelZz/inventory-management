@@ -15,7 +15,7 @@ import {
 
 export const categoryColumns: ColumnDef<Category>[] = [
   {
-    accessorKey: 'id',
+    accessorKey: 'categoria_id',
     header: ({ column }) => {
       return (
         <Button
@@ -28,7 +28,7 @@ export const categoryColumns: ColumnDef<Category>[] = [
       )
     },
     cell: ({ row }) => {
-      return <p className='text-center'>{row.getValue('id')}</p>
+      return <p className='text-center'>{row.getValue('categoria_id')}</p>
     }
   },
   {

@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
 import conn from '../db'
 import { ResultSetHeader, RowDataPacket } from 'mysql2'
-import { Product } from '../interfaces/product.interface'
 import { format, parse } from '@formkit/tempo'
+import { Product } from '../interfaces/models.interface'
 
 export const getProducts = async (
   req: Request,
@@ -11,7 +11,7 @@ export const getProducts = async (
   const query = `
     SELECT productos.*, categorias.nombre AS categoria_nombre
     FROM productos
-    JOIN categorias ON productos.categoria_id = categorias.id
+    JOIN categorias ON productos.categoria_id = categorias.categoria_id
   `
 
   try {
@@ -42,7 +42,7 @@ export const getProduct = async (
   res: Response
 ): Promise<Response> => {
   const { id } = req.params
-  const query = 'SELECT * FROM productos WHERE id = ?'
+  const query = 'SELECT * FROM productos WHERE producto_id = ?'
 
   try {
     const [row] = await conn.query<RowDataPacket[]>(query, [id])
@@ -105,7 +105,7 @@ export const updateProduct = async (
   // Construir la consulta SQL dinámicamente
   const query = `UPDATE productos SET ${fields
     .map(([key]) => `${key} = ?`)
-    .join(', ')} WHERE id = ?`
+    .join(', ')} WHERE producto_id = ?`
   const values = fields.map(([_, value]) => value)
 
   try {
@@ -127,7 +127,7 @@ export const deleteProduct = async (
   res: Response
 ): Promise<Response> => {
   const { id } = req.params
-  const query = 'DELETE FROM productos WHERE id = ?'
+  const query = 'DELETE FROM productos WHERE producto_id = ?'
 
   try {
     const [row] = await conn.query<ResultSetHeader>(query, [id])

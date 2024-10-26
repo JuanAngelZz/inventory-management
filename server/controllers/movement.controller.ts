@@ -11,7 +11,7 @@ export const getMovements = async (
   const query = `
     SELECT movimientos.*, productos.nombre AS producto_nombre 
     FROM movimientos
-    JOIN productos ON movimientos.producto_id = productos.id
+    JOIN productos ON movimientos.producto_id = productos.producto_id
   `
 
   try {
@@ -36,7 +36,7 @@ export const getMovement = async (
   res: Response
 ): Promise<Response> => {
   const { id } = req.params
-  const query = 'SELECT * FROM movimientos WHERE id = ?'
+  const query = 'SELECT * FROM movimientos WHERE movimiento_id = ?'
 
   try {
     const [row] = await conn.query<RowDataPacket[]>(query, [id])
@@ -66,7 +66,8 @@ export const createMovement = async (
     await conn.query<RowDataPacket[]>(query, movement)
 
     if (movement.tipo === 'salida') {
-      const queryStock = 'UPDATE productos SET stock = stock - ? WHERE id = ?'
+      const queryStock =
+        'UPDATE productos SET stock = stock - ? WHERE movimiento_id = ?'
       await conn.query<RowDataPacket[]>(queryStock, [
         movement.cantidad,
         movement.producto_id
@@ -74,7 +75,8 @@ export const createMovement = async (
     }
 
     if (movement.tipo === 'entrada') {
-      const queryStock = 'UPDATE productos SET stock = stock + ? WHERE id = ?'
+      const queryStock =
+        'UPDATE productos SET stock = stock + ? WHERE movimiento_id = ?'
       await conn.query<RowDataPacket[]>(queryStock, [
         movement.cantidad,
         movement.producto_id

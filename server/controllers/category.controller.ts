@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import conn from '../db'
 import { ResultSetHeader, RowDataPacket } from 'mysql2'
-import { Category } from '../interfaces/category.interface'
+import { Category } from '../interfaces/models.interface'
 
 export const getCategories = async (
   req: Request,
@@ -22,7 +22,7 @@ export const getCategory = async (
   res: Response
 ): Promise<Response> => {
   const { id } = req.params
-  const query = 'SELECT * FROM categorias WHERE id = ?'
+  const query = 'SELECT * FROM categorias WHERE categoria_id = ?'
 
   try {
     const [row] = await conn.query<RowDataPacket[]>(query, [id])
@@ -60,7 +60,7 @@ export const updateCategory = async (
 ): Promise<Response> => {
   const { id } = req.params
   const category: Category = req.body
-  const query = 'UPDATE categorias SET ? WHERE id = ?'
+  const query = 'UPDATE categorias SET ? WHERE categoria_id = ?'
 
   try {
     const [row] = await conn.query<ResultSetHeader>(query, [category, id])
@@ -80,7 +80,7 @@ export const deleteCategory = async (
   res: Response
 ): Promise<Response> => {
   const { id } = req.params
-  const query = 'DELETE FROM categorias WHERE id = ?'
+  const query = 'DELETE FROM categorias WHERE categoria_id = ?'
 
   try {
     const [row] = await conn.query<ResultSetHeader>(query, [id])

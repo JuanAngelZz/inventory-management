@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import conn from '../db'
 import { ResultSetHeader, RowDataPacket } from 'mysql2'
-import { CarrierCode } from '../interfaces/carrierCode.interface'
+import { CarrierCode } from '../interfaces/models.interface'
 
 export const getCarrierCodes = async (
   req: Request,

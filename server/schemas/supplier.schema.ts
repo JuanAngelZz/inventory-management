@@ -6,6 +6,11 @@ export const supplierSchema = z.object({
       required_error: 'El atributo "nombre" es requerido'
     })
     .min(3, 'El nombre del proveedor debe tener al menos 3 caracteres'),
+  tipo: z
+    .string({
+      required_error: 'El atributo "tipo" es requerido'
+    })
+    .min(3, 'El tipo de proveedor debe tener al menos 3 caracteres'),
   telefono: z
     .string({
       required_error: 'El atributo "telefono" es requerido'

@@ -15,7 +15,7 @@ import {
 
 export const movementColumns: ColumnDef<Movement>[] = [
   {
-    accessorKey: 'id',
+    accessorKey: 'movimiento_id',
     header: ({ column }) => {
       return (
         <Button
@@ -28,7 +28,7 @@ export const movementColumns: ColumnDef<Movement>[] = [
       )
     },
     cell: ({ row }) => {
-      return <p className='text-center'>{row.getValue('id')}</p>
+      return <p className='text-center'>{row.getValue('movimiento_id')}</p>
     }
   },
   {

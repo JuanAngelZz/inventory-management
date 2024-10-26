@@ -1,12 +1,12 @@
 export type User = {
-  id?: number
+  usuario_id?: number
   nombre: string
   rol?: string
   contrasena?: string
 }
 
 export interface Product {
-  id: number
+  producto_id: number
   nombre: string
   descripcion: string
   stock: number
@@ -18,7 +18,7 @@ export interface Product {
 }
 
 export interface Movement {
-  id: number
+  movimiento_id: number
   tipo: 'entrada' | 'salida'
   cantidad: number
   fecha: Date
@@ -27,6 +27,6 @@ export interface Movement {
 }
 
 export interface Category {
-  id: number
+  categoria_id: number
   nombre: string
 }

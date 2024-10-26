@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
 import conn from '../db'
 import { RowDataPacket } from 'mysql2'
-import { createToken, verifyToken } from '../utils/jwt'
+import { createToken } from '../utils/jwt'
 import bcrypt from 'bcrypt'
-import { User } from '../interfaces/user.interface'
-import jwt, { JwtPayload } from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import { SECRET } from '../config'
+import { User } from '../interfaces/models.interface'
 
 export const registerUser = async (
   req: Request,

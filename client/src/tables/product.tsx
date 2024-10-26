@@ -15,7 +15,7 @@ import {
 
 export const productColumns: ColumnDef<Product>[] = [
   {
-    accessorKey: 'id',
+    accessorKey: 'producto_id',
     header: ({ column }) => {
       return (
         <Button
@@ -28,7 +28,7 @@ export const productColumns: ColumnDef<Product>[] = [
       )
     },
     cell: ({ row }) => {
-      return <p className='text-center'>{row.getValue('id')}</p>
+      return <p className='text-center'>{row.getValue('producto_id')}</p>
     }
   },
   {
@@ -83,20 +83,45 @@ export const productColumns: ColumnDef<Product>[] = [
     }
   },
   {
-    accessorKey: 'precio',
+    accessorKey: 'precio_compra',
     header: ({ column }) => {
       return (
         <Button
           variant='ghost'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Precio
+          Precio de Compra
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       )
     },
     cell: ({ row }) => {
-      return <p className='text-center'>${row.getValue('precio')}</p>
+      return (
+        <p className='text-center text-red-700'>
+          ${row.getValue('precio_compra')}
+        </p>
+      )
+    }
+  },
+  {
+    accessorKey: 'precio_venta',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Precio de Venta
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      return (
+        <p className='text-center text-green-700'>
+          ${row.getValue('precio_venta')}
+        </p>
+      )
     }
   },
   {
@@ -140,7 +165,7 @@ export const productColumns: ColumnDef<Product>[] = [
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant='ghost' className='h-8 w-8 p-0'>
-              <span className='sr-only'>Open menu</span>
+              <span className='sr-only'>Abrir menu</span>
               <MoreHorizontal className='h-4 w-4' />
             </Button>
           </DropdownMenuTrigger>
@@ -151,7 +176,7 @@ export const productColumns: ColumnDef<Product>[] = [
               <span>Editar</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => {}}>
               <Trash2 className='mr-2 h-4 w-4 text-red-800' />
               <span className='text-red-800'>Eliminar</span>
             </DropdownMenuItem>

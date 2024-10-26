@@ -15,7 +15,7 @@ const Login = () => {
       </section>
       <section className='col-span-4 h-screen flex flex-col items-center justify-center'>
         <h1 className='scroll-m-20 max-w-[500px] text-4xl tracking-tight text-center mb-10'>
-          Sistema de Gestión de Inventario
+          Inferfreitas C.A. <br /> Sistema de Gestión de Inventario
         </h1>
         <LoginForm />
       </section>
