@@ -18,7 +18,7 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from './ui/button'
 import MyTableHead from './MyTableHead'
 
@@ -38,6 +38,32 @@ export function DataTable<TData, TValue>({
 }) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 })
+
+  useEffect(() => {
+    const resizeHandler = () => {
+      
+      const screenHeight = window.screen.height
+      console.log(screenHeight)
+
+      if (screenHeight <= 768) {
+        setPagination({ pageIndex: 0, pageSize: 4 })
+      } else if (screenHeight > 768 && screenHeight <= 1024) {
+        setPagination({ pageIndex: 0, pageSize: 6 })
+      } else if (screenHeight > 1024 && screenHeight <= 1366) {
+        setPagination({ pageIndex: 0, pageSize: 8 })
+      } else {
+        setPagination({ pageIndex: 0, pageSize: 10 })
+      }
+    }
+
+    resizeHandler()
+    window.addEventListener('resize', resizeHandler)
+
+    return () => {
+      window.removeEventListener('resize', resizeHandler)
+    }
+  }, [])
 
   const table = useReactTable({
     data,
@@ -48,15 +74,12 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    onPaginationChange: setPagination,
     state: {
       sorting,
-      columnFilters
+      columnFilters,
+      pagination
     },
-    initialState: {
-      pagination: {
-        pageSize: 6
-      }
-    }
   })
 
   return (
