@@ -58,7 +58,11 @@ export const loginUser = async (
     }
 
     const jwt = createToken({ nombre: rows[0].nombre })
-    const user = { id: rows[0].id, nombre: rows[0].nombre, rol: rows[0].rol }
+    const user = {
+      usuario_id: rows[0].usuario_id,
+      nombre: rows[0].nombre,
+      rol: rows[0].rol
+    }
 
     res.setHeader('Authorization', `Bearer ${jwt}`)
     return res.status(200).json({ token: jwt, user })

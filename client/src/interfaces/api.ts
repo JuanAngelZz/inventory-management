@@ -1,5 +1,5 @@
 import { AxiosError, AxiosResponse } from 'axios'
-import { Category, Movement, Product, User } from './models'
+import { Category, Movement, Product, Supplier, User } from './models'
 
 export type LoginResponse = AxiosResponse<{
   token: string
@@ -23,6 +23,10 @@ export interface ErrorState extends AxiosError {
 
 export type GetProductResponse = AxiosResponse<Product>
 export type GetProductsResponse = AxiosResponse<Product[]>
+
+// Respuesta Proveedores
+
+export type GetSuppliersResponse = AxiosResponse<Supplier[]>
 
 // Respuesta Movimientos
 

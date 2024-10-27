@@ -4,7 +4,8 @@ import {
   ChartColumnStacked,
   ChevronsLeftRightEllipsis,
   House,
-  PackageSearch
+  PackageSearch,
+  Factory
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
@@ -45,6 +46,14 @@ const Navbar = () => {
               className='w-full text-white text-lg font-bold'
             >
               <PackageSearch className='mr-2 h-6 w-6' /> Productos
+            </Button>
+          </Link>
+          <Link to='/suppliers'>
+            <Button
+              variant='ghost'
+              className='w-full text-white text-lg font-bold'
+            >
+              <Factory className='mr-2 h-6 w-6' /> Proovedores
             </Button>
           </Link>
           <Link to='/categories'>

@@ -7,7 +7,12 @@ export const getSuppliers = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const query = 'SELECT * FROM proveedores'
+  const query = `
+    SELECT proveedores.*,
+    CONCAT(codigos_telefono.codigo_operadora, '-', proveedores.telefono) AS numero_telefono
+    FROM proveedores
+    JOIN codigos_telefono ON proveedores.codigo_telefono_id = codigos_telefono.codigo_telefono_id
+  `
 
   try {
     const [rows] = await conn.query<RowDataPacket[]>(query)

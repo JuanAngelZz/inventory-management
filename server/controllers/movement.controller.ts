@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
 import conn from '../db'
 import { RowDataPacket } from 'mysql2'
-import { Movement } from '../interfaces/movement.interface'
 import { format } from '@formkit/tempo'
+import { Movement } from '../interfaces/models.interface'
 
 export const getMovements = async (
   req: Request,

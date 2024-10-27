@@ -17,6 +17,15 @@ export interface Product {
   categoria_nombre: string
 }
 
+export interface Supplier {
+  proveedor_id?: number
+  nombre: string
+  tipo: string
+  telefono: string
+  direccion: string
+  codigo_telefono_id: string
+}
+
 export interface Movement {
   movimiento_id: number
   tipo: 'entrada' | 'salida'
@@ -29,4 +38,10 @@ export interface Movement {
 export interface Category {
   categoria_id: number
   nombre: string
+}
+
+export interface CarrierCode {
+  codigo_telefono_id?: number
+  operadora: string
+  codigo_operadora: string
 }

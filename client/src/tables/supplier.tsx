@@ -1,4 +1,4 @@
-import { Movement } from '@/interfaces/models'
+import { Supplier } from '@/interfaces/models'
 import { ColumnDef } from '@tanstack/react-table'
 
 import { ArrowUpDown, MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
@@ -13,9 +13,9 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 
-export const movementColumns: ColumnDef<Movement>[] = [
+export const supplierColumns: ColumnDef<Supplier>[] = [
   {
-    accessorKey: 'movimiento_id',
+    accessorKey: 'proveedor_id',
     header: ({ column }) => {
       return (
         <Button
@@ -28,7 +28,24 @@ export const movementColumns: ColumnDef<Movement>[] = [
       )
     },
     cell: ({ row }) => {
-      return <p className='text-center'>{row.getValue('movimiento_id')}</p>
+      return <p className='text-center'>{row.getValue('proveedor_id')}</p>
+    }
+  },
+  {
+    accessorKey: 'nombre',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Nombre
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      return <p className='text-center'>{row.getValue('nombre')}</p>
     }
   },
   {
@@ -45,62 +62,41 @@ export const movementColumns: ColumnDef<Movement>[] = [
       )
     },
     cell: ({ row }) => {
-      return row.getValue('tipo') == 'entrada' ? (
-        <p className='text-center text-green-700'>{row.getValue('tipo')}</p>
-      ) : (
-        <p className='text-center text-red-700'>{row.getValue('tipo')}</p>
-      )
+      return <p className='text-center'>{row.getValue('tipo')}</p>
     }
   },
   {
-    accessorKey: 'cantidad',
+    accessorKey: 'numero_telefono',
     header: ({ column }) => {
       return (
         <Button
           variant='ghost'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Cantidad
+          Telefono
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       )
     },
     cell: ({ row }) => {
-      return <p className='text-center'>{row.getValue('cantidad')}</p>
+      return <p className='text-center'>{row.getValue('numero_telefono')}</p>
     }
   },
   {
-    accessorKey: 'fecha',
+    accessorKey: 'direccion',
     header: ({ column }) => {
       return (
         <Button
           variant='ghost'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Fecha
+          Dirección
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       )
     },
     cell: ({ row }) => {
-      return <p className='text-center'>{row.getValue('fecha')}</p>
-    }
-  },
-  {
-    accessorKey: 'producto_nombre',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant='ghost'
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Producto
-          <ArrowUpDown className='ml-2 h-4 w-4' />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      return <p className='text-center'>{row.getValue('producto_nombre')}</p>
+      return <p className='text-center'>{row.getValue('direccion')}</p>
     }
   },
   {
