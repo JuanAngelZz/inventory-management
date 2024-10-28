@@ -1,5 +1,5 @@
 import { getAllSuppliers } from '@/api/suppliers'
-import CreateProductForm from '@/components/CreateProductForm'
+import UpdateProductForm from '@/components/UpdateProductForm'
 import { DataTable } from '@/components/DataTable'
 import Header from '@/components/Header'
 import { Supplier } from '@/interfaces/models'
@@ -29,7 +29,7 @@ const Suppliers = () => {
         columns={supplierColumns}
         data={suppliers}
         customButtonLabel='Añadir nuevo proveedor'
-        customDialogContent={CreateProductForm}
+        customDialogContent={UpdateProductForm}
       />
     </>
   )

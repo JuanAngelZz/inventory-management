@@ -6,14 +6,7 @@ import {
   DialogHeader,
   DialogTitle
 } from './ui/dialog'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from './ui/form'
+import { Form, FormControl, FormField, FormLabel, FormMessage } from './ui/form'
 import { Input } from './ui/input'
 import { Label } from './ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
@@ -32,10 +25,25 @@ import { z } from 'zod'
 import { productSchema } from '@/schemas/productForm'
 import { Calendar } from './ui/calendar'
 import { CalendarIcon } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { format } from '@formkit/tempo'
+import { format, parse } from '@formkit/tempo'
+import useProductStore from '@/stores/productStore'
+import { useEffect } from 'react'
+import useCategoryStore from '@/stores/categoryStore'
+import { subDays } from 'date-fns'
 
-const CreateProductForm = () => {
+const UpdateProductForm = ({ id }: { id: number }) => {
+  const selectedProduct = useProductStore((state) => state.selectedProduct)
+  const getProduct = useProductStore((state) => state.getProduct)
+  const updateProduct = useProductStore((state) => state.updateProduct)
+
+  const categories = useCategoryStore((state) => state.categories)
+  const getCategories = useCategoryStore((state) => state.getCategories)
+
+  useEffect(() => {
+    getProduct(id)
+    getCategories()
+  }, [])
+
   const form = useForm<z.infer<typeof productSchema>>({
     resolver: zodResolver(productSchema)
   })
@@ -66,6 +74,7 @@ const CreateProductForm = () => {
             <FormField
               control={form.control}
               name='nombre'
+              defaultValue={selectedProduct?.nombre}
               render={({ field }) => (
                 <>
                   <FormLabel htmlFor={field.name}>
@@ -87,10 +96,37 @@ const CreateProductForm = () => {
           <div className='grid grid-cols-4 items-center gap-4'>
             <FormField
               control={form.control}
-              name='precio'
+              name='precio_compra'
+              defaultValue={selectedProduct?.precio_compra}
               render={({ field }) => (
                 <>
-                  <FormLabel htmlFor={field.name}>Precio ($)</FormLabel>
+                  <FormLabel htmlFor={field.name}>
+                    Precio de compra ($)
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      id={field.name}
+                      className='col-span-3'
+                      placeholder='Precio'
+                      type='number'
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </>
+              )}
+            />
+          </div>
+          <div className='grid grid-cols-4 items-center gap-4'>
+            <FormField
+              control={form.control}
+              name='precio_venta'
+              defaultValue={selectedProduct?.precio_venta}
+              render={({ field }) => (
+                <>
+                  <FormLabel htmlFor={field.name}>
+                    Precio de venta ($)
+                  </FormLabel>
                   <FormControl>
                     <Input
                       id={field.name}
@@ -109,6 +145,7 @@ const CreateProductForm = () => {
             <FormField
               control={form.control}
               name='descripcion'
+              defaultValue={selectedProduct?.descripcion}
               render={({ field }) => (
                 <>
                   <FormLabel htmlFor={field.name}>
@@ -136,15 +173,24 @@ const CreateProductForm = () => {
                 <>
                   <FormLabel htmlFor={field.name}>Categoría</FormLabel>
                   <FormControl>
-                    <Select>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
                       <SelectTrigger className='col-span-3'>
                         <SelectValue placeholder='Seleccione una categoría' />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
                           <SelectLabel>Categorías</SelectLabel>
-                          <SelectItem value='apple'>Apple</SelectItem>
-                          <SelectItem value='banana'>Banana</SelectItem>
+                          {categories.map((category) => (
+                            <SelectItem
+                              key={category.categoria_id}
+                              value={category.categoria_id.toString()}
+                            >
+                              {category.nombre}
+                            </SelectItem>
+                          ))}
                         </SelectGroup>
                       </SelectContent>
                     </Select>
@@ -158,6 +204,7 @@ const CreateProductForm = () => {
             <FormField
               control={form.control}
               name='stock'
+              defaultValue={selectedProduct?.stock}
               render={({ field }) => (
                 <>
                   <FormLabel htmlFor={field.name}>Stock</FormLabel>
@@ -190,7 +237,7 @@ const CreateProductForm = () => {
                         <FormControl>
                           <Button variant='outline' className='w-full'>
                             {field.value ? (
-                              format(field.value, 'DD/MM/YYYY')
+                              format(field.value, 'dd/MM/yyyy')
                             ) : (
                               <span>Seleccionar fecha</span>
                             )}
@@ -202,10 +249,8 @@ const CreateProductForm = () => {
                         <Calendar
                           mode='single'
                           selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date('1900-01-01')
-                          }
+                          onSelect={(date) => field.onChange(date)}
+                          disabled={(date) => date > new Date()}
                           initialFocus
                         />
                       </PopoverContent>
@@ -230,7 +275,7 @@ const CreateProductForm = () => {
                         <FormControl>
                           <Button variant='outline' className='w-full'>
                             {field.value ? (
-                              format(field.value, 'DD/MM/YYYY')
+                              format(field.value, 'dd/MM/yyyy')
                             ) : (
                               <span>Seleccionar fecha</span>
                             )}
@@ -242,9 +287,9 @@ const CreateProductForm = () => {
                         <Calendar
                           mode='single'
                           selected={field.value}
-                          onSelect={field.onChange}
+                          onSelect={(date) => field.onChange(date)}
                           disabled={(date) =>
-                            date > new Date() || date < new Date('1900-01-01')
+                            date < new Date() || date < subDays(new Date(), 30)
                           }
                           initialFocus
                         />
@@ -266,4 +311,4 @@ const CreateProductForm = () => {
   )
 }
 
-export default CreateProductForm
+export default UpdateProductForm

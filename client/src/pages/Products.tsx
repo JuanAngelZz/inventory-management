@@ -1,26 +1,17 @@
-import { getAllProducts } from '@/api/products'
-import CreateProductForm from '@/components/CreateProductForm'
+import UpdateProductForm from '@/components/UpdateProductForm'
 import { DataTable } from '@/components/DataTable'
 import Header from '@/components/Header'
-import { Product } from '@/interfaces/models'
+import useProductStore from '@/stores/productStore'
 import { productColumns } from '@/tables/product'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 const Products = () => {
-  const [products, setProducts] = useState<Product[]>([])
+  const products = useProductStore((state) => state.products)
+  const getProducts = useProductStore((state) => state.getProducts)
 
   useEffect(() => {
     getProducts()
   }, [])
-
-  const getProducts = async () => {
-    try {
-      const response = await getAllProducts()
-      setProducts(response.data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
 
   return (
     <>
@@ -29,7 +20,7 @@ const Products = () => {
         columns={productColumns}
         data={products}
         customButtonLabel='Añadir nuevo producto'
-        customDialogContent={CreateProductForm}
+        url='/products/create'
       />
     </>
   )

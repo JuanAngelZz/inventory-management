@@ -22,5 +22,10 @@ export interface MyTableHeadProps {
   onFilterChange: (value: string) => void
   placeholder?: string
   customButtonLabel?: string // Add custom button label
-  CustomDialogContent?: React.ComponentType // Add custom dialog content
+  url: string
+}
+
+export interface DeleteDialogProps {
+  onDeleteItem: () => void
+  description: string
 }

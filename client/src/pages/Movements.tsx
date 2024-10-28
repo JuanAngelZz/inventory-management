@@ -1,5 +1,5 @@
 import { getAllMovements } from '@/api/movements'
-import CreateProductForm from '@/components/CreateProductForm'
+import UpdateProductForm from '@/components/UpdateProductForm'
 import { DataTable } from '@/components/DataTable'
 import Header from '@/components/Header'
 import { Movement } from '@/interfaces/models'
@@ -29,7 +29,7 @@ const Movements = () => {
         columns={movementColumns}
         data={movements}
         customButtonLabel='Registrar movimiento'
-        customDialogContent={CreateProductForm}
+        customDialogContent={UpdateProductForm}
       />
     </>
   )

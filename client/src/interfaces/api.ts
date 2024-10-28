@@ -27,11 +27,14 @@ export type GetProductsResponse = AxiosResponse<Product[]>
 // Respuesta Proveedores
 
 export type GetSuppliersResponse = AxiosResponse<Supplier[]>
+export type GetSupplierResponse = AxiosResponse<Supplier>
 
 // Respuesta Movimientos
 
 export type GetMovementsResponse = AxiosResponse<Movement[]>
+export type GetMovementResponse = AxiosResponse<Movement>
 
 // Respuesta Categorías
 
 export type GetCategoriesResponse = AxiosResponse<Category[]>
+export type GetCategoryResponse = AxiosResponse<Category>

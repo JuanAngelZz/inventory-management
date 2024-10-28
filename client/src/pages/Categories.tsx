@@ -1,5 +1,5 @@
 import { getAllCategories } from '@/api/categories'
-import CreateProductForm from '@/components/CreateProductForm'
+import UpdateProductForm from '@/components/UpdateProductForm'
 import { DataTable } from '@/components/DataTable'
 import Header from '@/components/Header'
 import { Category } from '@/interfaces/models'
@@ -29,7 +29,7 @@ const Categories = () => {
         columns={categoryColumns}
         data={categories}
         customButtonLabel='Añadir nueva categoría'
-        customDialogContent={CreateProductForm}
+        customDialogContent={UpdateProductForm}
       />
     </>
   )

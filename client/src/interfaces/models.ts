@@ -10,11 +10,12 @@ export interface Product {
   nombre: string
   descripcion: string
   stock: number
-  precio: number
+  precio_compra: number
+  precio_venta: number
   fecha_adquisicion: string
   fecha_vencimiento: string
   categoria_id: number
-  categoria_nombre: string
+  categoria_nombre?: string
 }
 
 export interface Supplier {

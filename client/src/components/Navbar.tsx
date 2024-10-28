@@ -5,7 +5,8 @@ import {
   ChevronsLeftRightEllipsis,
   House,
   PackageSearch,
-  Factory
+  Factory,
+  MonitorCog
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
@@ -62,6 +63,14 @@ const Navbar = () => {
               className='w-full text-white text-lg font-bold'
             >
               <ChartColumnStacked className='mr-2 h-6 w-6' /> Categorías
+            </Button>
+          </Link>
+          <Link to='/administrate'>
+            <Button
+              variant='ghost'
+              className='w-full text-white text-lg font-bold'
+            >
+              <MonitorCog className='mr-2 h-6 w-6' /> Administrar
             </Button>
           </Link>
         </ul>

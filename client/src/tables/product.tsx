@@ -12,6 +12,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import DeleteDialog from '@/components/DeleteDialog'
+import { useToast } from '@/hooks/use-toast'
+import useProductStore from '@/stores/productStore'
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
+import UpdateProductForm from '@/components/UpdateProductForm'
 
 export const productColumns: ColumnDef<Product>[] = [
   {
@@ -160,7 +165,23 @@ export const productColumns: ColumnDef<Product>[] = [
   },
   {
     id: 'actions',
-    cell: () => {
+    accessorKey: 'producto_id',
+    cell: ({ row }) => {
+      const { toast } = useToast()
+      const deleteProduct = useProductStore((state) => state.deleteProduct)
+
+      const onDeleteItem = async () => {
+        try {
+          const productoId = row.getValue<number>('producto_id')
+          await deleteProduct(productoId)
+          toast({
+            variant: 'destructive',
+            title: 'Producto eliminado exitosamente del inventario'
+          })
+        } catch (error) {
+          console.log(error)
+        }
+      }
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -171,14 +192,26 @@ export const productColumns: ColumnDef<Product>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end'>
             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuItem>
+            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
               <Pencil className='mr-2 h-4 w-4' />
-              <span>Editar</span>
+              <Dialog>
+                <DialogTrigger>
+                  <span>Editar</span>
+                </DialogTrigger>
+                <DialogContent className='sm:max-w-[425px]'>
+                  <UpdateProductForm id={row.getValue('producto_id')} />
+                </DialogContent>
+              </Dialog>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => {}}>
+            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
               <Trash2 className='mr-2 h-4 w-4 text-red-800' />
-              <span className='text-red-800'>Eliminar</span>
+              <DeleteDialog
+                onDeleteItem={onDeleteItem}
+                description='Esta acción no se puede deshacer. Eliminará permanentemente el
+                producto y los registros de movimientos asociados a él de nuestros
+                servidores.'
+              />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

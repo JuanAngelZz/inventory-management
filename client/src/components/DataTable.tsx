@@ -31,10 +31,10 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   customButtonLabel,
-  customDialogContent
+  url
 }: DataTableProps<TData, TValue> & {
   customButtonLabel?: string
-  customDialogContent?: React.ComponentType
+  url: string
 }) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -42,7 +42,6 @@ export function DataTable<TData, TValue>({
 
   useEffect(() => {
     const resizeHandler = () => {
-      
       const screenHeight = window.screen.height
       console.log(screenHeight)
 
@@ -79,7 +78,7 @@ export function DataTable<TData, TValue>({
       sorting,
       columnFilters,
       pagination
-    },
+    }
   })
 
   return (
@@ -93,7 +92,7 @@ export function DataTable<TData, TValue>({
         }
         placeholder='Buscar por nombre'
         customButtonLabel={customButtonLabel}
-        CustomDialogContent={customDialogContent}
+        url={url}
       />
       <div className='rounded-md border'>
         <Table>

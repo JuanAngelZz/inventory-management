@@ -14,18 +14,21 @@ export const productSchema = z.object({
       required_error: 'El atributo "stock" es requerido'
     })
     .min(0),
-  precio: z
+  precio_compra: z
     .number({
-      required_error: 'El atributo "precio" es requerido'
+      required_error: 'El atributo "precio_compra" es requerido'
     })
     .min(0),
-  fecha_adquisicion: z.string().default(new Date().toISOString()),
-  fecha_vencimiento: z.string({
+  precio_venta: z
+    .number({
+      required_error: 'El atributo "precio_venta" es requerido'
+    })
+    .min(0),
+  fecha_adquisicion: z.date().default(new Date()),
+  fecha_vencimiento: z.date({
     required_error: 'El atributo "fecha_vencimiento" es requerido'
   }),
-  categoria_id: z
-    .number({
-      required_error: 'El atributo "categoria_id" es requerido'
-    })
-    .min(0)
+  categoria_id: z.string({
+    required_error: 'El atributo "categoria_id" es requerido'
+  })
 })
