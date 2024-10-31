@@ -28,7 +28,7 @@ const Home = () => {
             <img
               src={productpng}
               alt='Elegant Watch'
-              className='w-full h-48 object-cover'
+              className='w-full h-48 object-scale-down'
             />
           </CardHeader>
           <CardContent className='p-4 flex-grow'>
@@ -51,7 +51,7 @@ const Home = () => {
             <img
               src={movementpng}
               alt='Elegant Watch'
-              className='w-full h-48 object-cover'
+              className='w-full h-48 object-scale-down'
             />
           </CardHeader>
           <CardContent className='p-4 flex-grow'>
@@ -74,7 +74,7 @@ const Home = () => {
             <img
               src={categorypng}
               alt='Elegant Watch'
-              className='w-full h-48 object-cover'
+              className='w-full h-48 object-scale-down'
             />
           </CardHeader>
           <CardContent className='p-4 flex-grow'>

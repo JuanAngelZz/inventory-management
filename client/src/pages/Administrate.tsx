@@ -36,7 +36,7 @@ const Administrate = () => {
               Usuarios
             </CardTitle>
             <CardDescription className='text-gray-700 mb-4'>
-              Gestionar los usuarios del sistema
+              Gestionar los usuarios registrados en el sistema
             </CardDescription>
           </CardContent>
           <CardFooter className='p-4 bg-gray-100'>
@@ -80,7 +80,7 @@ const Administrate = () => {
           <CardContent className='p-4 flex-grow'>
             <CardTitle className='text-xl font-semibold mb-2'>Migrar</CardTitle>
             <CardDescription className='text-gray-700 mb-4'>
-              Migrar la base de datos
+              Realizar la migración de la base de datos
             </CardDescription>
           </CardContent>
           <CardFooter className='p-4 bg-gray-100'>
