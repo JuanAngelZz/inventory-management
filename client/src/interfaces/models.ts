@@ -6,7 +6,7 @@ export type User = {
 }
 
 export interface Product {
-  producto_id: number
+  producto_id?: number
   nombre: string
   descripcion: string
   stock: number

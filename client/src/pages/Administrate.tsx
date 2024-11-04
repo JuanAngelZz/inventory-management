@@ -59,7 +59,7 @@ const Administrate = () => {
               Respaldo
             </CardTitle>
             <CardDescription className='text-gray-700 mb-4'>
-              Realizar respaldo de la base de datos
+              Gestionar y realizar respaldo de la base de datos
             </CardDescription>
           </CardContent>
           <CardFooter className='p-4 bg-gray-100'>
@@ -80,7 +80,7 @@ const Administrate = () => {
           <CardContent className='p-4 flex-grow'>
             <CardTitle className='text-xl font-semibold mb-2'>Migrar</CardTitle>
             <CardDescription className='text-gray-700 mb-4'>
-              Realizar la migración de la base de datos
+              Gestionar y realizar la migración de la base de datos
             </CardDescription>
           </CardContent>
           <CardFooter className='p-4 bg-gray-100'>

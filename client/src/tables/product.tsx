@@ -70,23 +70,7 @@ export const productColumns: ColumnDef<Product>[] = [
       return <p className='text-center'>{row.getValue('stock')}</p>
     }
   },
-  {
-    accessorKey: 'categoria_nombre',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant='ghost'
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Categoría
-          <ArrowUpDown className='ml-2 h-4 w-4' />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      return <p className='text-center'>{row.getValue('categoria_nombre')}</p>
-    }
-  },
+
   {
     accessorKey: 'precio_compra',
     header: ({ column }) => {
@@ -130,6 +114,40 @@ export const productColumns: ColumnDef<Product>[] = [
     }
   },
   {
+    accessorKey: 'categoria_nombre',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Categoría
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      return <p className='text-center'>{row.getValue('categoria_nombre')}</p>
+    }
+  },
+  {
+    accessorKey: 'descripcion',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Descripción
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      return <p className='text-center'>{row.getValue('descripcion')}</p>
+    }
+  },
+  {
     accessorKey: 'fecha_adquisicion',
     header: ({ column }) => {
       return (
@@ -166,6 +184,9 @@ export const productColumns: ColumnDef<Product>[] = [
   {
     id: 'actions',
     accessorKey: 'producto_id',
+    header: () => {
+      return <Button variant='ghost'>Acciones</Button>
+    },
     cell: ({ row }) => {
       const { toast } = useToast()
       const deleteProduct = useProductStore((state) => state.deleteProduct)

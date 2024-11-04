@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import {
+  createProduct,
   deleteProduct,
   getAllProducts,
   getProduct,
@@ -16,6 +17,7 @@ interface ProductStore {
 
   getProducts: () => Promise<void>
   getProduct: (id: number) => Promise<void>
+  createProduct: (product: Product) => Promise<void>
   updateProduct: (id: number, product: Product) => Promise<void>
   deleteProduct: (id: number) => Promise<void>
 }
@@ -40,6 +42,14 @@ const useProductStore = create<ProductStore>((set, get) => ({
     try {
       const response = await getProduct(id)
       get().setSelectedProduct(response.data)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+
+  createProduct: async (product) => {
+    try {
+      await createProduct(product)
     } catch (error) {
       console.log(error)
     }
