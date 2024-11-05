@@ -163,6 +163,7 @@ const UpdateProductForm = ({ id }: { id: number }) => {
                       type='number'
                       min={0}
                       {...field}
+                      step={0.01}
                     />
                   </FormControl>
                   <FormMessage />
@@ -187,6 +188,7 @@ const UpdateProductForm = ({ id }: { id: number }) => {
                       type='number'
                       min={0}
                       {...field}
+                      step={0.01}
                     />
                   </FormControl>
                   <FormMessage />

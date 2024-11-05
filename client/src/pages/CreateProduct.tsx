@@ -213,7 +213,7 @@ const CreateProduct = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel htmlFor={field.name}>
-                      Descripción del producto
+                      Descripción del producto (opcional)
                     </FormLabel>
                     <FormControl>
                       <Textarea
@@ -288,7 +288,7 @@ const CreateProduct = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel htmlFor={field.name}>
-                      Fecha de adquisición
+                      Fecha de adquisición (por defecto la fecha actual)
                     </FormLabel>
                     <div className='col-span-3'>
                       <Popover>
@@ -354,8 +354,8 @@ const CreateProduct = () => {
                   </FormItem>
                 )}
               />
+            <Button type='submit' className='w-full'>Submit</Button>
             </div>
-            <Button type='submit'>Submit</Button>
           </form>
         </Form>
       </main>
