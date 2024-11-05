@@ -40,7 +40,10 @@ const Administrate = () => {
             </CardDescription>
           </CardContent>
           <CardFooter className='p-4 bg-gray-100'>
-            <Button onClick={() => navigate('users')} className='w-full'>
+            <Button
+              onClick={() => navigate('users')}
+              className='w-full bg-slate-700'
+            >
               Ir
             </Button>
           </CardFooter>
@@ -63,7 +66,10 @@ const Administrate = () => {
             </CardDescription>
           </CardContent>
           <CardFooter className='p-4 bg-gray-100'>
-            <Button onClick={() => navigate('backup')} className='w-full'>
+            <Button
+              onClick={() => navigate('backup')}
+              className='w-full bg-slate-700'
+            >
               Ir
             </Button>
           </CardFooter>
@@ -84,7 +90,10 @@ const Administrate = () => {
             </CardDescription>
           </CardContent>
           <CardFooter className='p-4 bg-gray-100'>
-            <Button onClick={() => navigate('migrate')} className='w-full'>
+            <Button
+              onClick={() => navigate('migrate')}
+              className='w-full bg-slate-700'
+            >
               Ir
             </Button>
           </CardFooter>

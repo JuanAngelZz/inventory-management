@@ -40,7 +40,10 @@ const Home = () => {
             </CardDescription>
           </CardContent>
           <CardFooter className='p-4 bg-gray-100'>
-            <Button onClick={() => navigate('/products')} className='w-full'>
+            <Button
+              onClick={() => navigate('/products')}
+              className='w-full bg-slate-600'
+            >
               Ir
             </Button>
           </CardFooter>
@@ -63,7 +66,10 @@ const Home = () => {
             </CardDescription>
           </CardContent>
           <CardFooter className='p-4 bg-gray-100'>
-            <Button onClick={() => navigate('/movements')} className='w-full'>
+            <Button
+              onClick={() => navigate('/movements')}
+              className='w-full bg-slate-600'
+            >
               Ir
             </Button>
           </CardFooter>
@@ -86,7 +92,10 @@ const Home = () => {
             </CardDescription>
           </CardContent>
           <CardFooter className='p-4 bg-gray-100'>
-            <Button onClick={() => navigate('/categories')} className='w-full'>
+            <Button
+              onClick={() => navigate('/categories')}
+              className='w-full bg-slate-600'
+            >
               Ir
             </Button>
           </CardFooter>

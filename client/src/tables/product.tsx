@@ -144,7 +144,9 @@ export const productColumns: ColumnDef<Product>[] = [
       )
     },
     cell: ({ row }) => {
-      return <p className='text-center'>{row.getValue('descripcion')}</p>
+      return (
+        <p className='text-center'>{row.getValue('descripcion') || '---'}</p>
+      )
     }
   },
   {

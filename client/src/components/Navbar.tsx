@@ -16,7 +16,7 @@ const Navbar = () => {
   return (
     <nav
       style={{ gridArea: '1 / 1 / 9 / 3' }}
-      className='flex flex-col bg-slate-800 p-6'
+      className='flex flex-col bg-slate-700 p-6'
     >
       <section>
         <h1 className='text-white text-center text-balance mb-4 scroll-m-20 border-b pb-2 text-3xl font-light tracking-tight first:mt-0'>
@@ -87,7 +87,7 @@ const Navbar = () => {
             variant='outline'
             className='w-full mt-4 text-lg font-bold'
           >
-            Cerrar Sesion
+            Cerrar Sesión
           </Button>
         </section>
       </div>

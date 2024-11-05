@@ -90,6 +90,7 @@ const CreateProduct = () => {
       description: (
         <p>
           El producto <strong>{data.nombre}</strong> ha sido creado con exito.{' '}
+          <br />
           <strong>
             <Link to='/products'>Ir a productos</Link>
           </strong>
@@ -354,7 +355,9 @@ const CreateProduct = () => {
                   </FormItem>
                 )}
               />
-            <Button type='submit' className='w-full'>Submit</Button>
+              <Button type='submit' className='w-full'>
+                Enviar
+              </Button>
             </div>
           </form>
         </Form>
