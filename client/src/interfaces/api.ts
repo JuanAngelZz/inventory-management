@@ -1,5 +1,12 @@
 import { AxiosError, AxiosResponse } from 'axios'
-import { Category, Movement, Product, Supplier, User } from './models'
+import {
+  CarrierCode,
+  Category,
+  Movement,
+  Product,
+  Supplier,
+  User
+} from './models'
 
 export type LoginResponse = AxiosResponse<{
   token: string
@@ -38,3 +45,8 @@ export type GetMovementResponse = AxiosResponse<Movement>
 
 export type GetCategoriesResponse = AxiosResponse<Category[]>
 export type GetCategoryResponse = AxiosResponse<Category>
+
+// Respuesta Codigos de areas
+
+export type GetCarrierCodesResponse = AxiosResponse<CarrierCode[]>
+export type GetCarrierCodeResponse = AxiosResponse<CarrierCode>

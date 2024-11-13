@@ -9,6 +9,14 @@ import {
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList
+} from '@/components/ui/command'
+import {
   Form,
   FormControl,
   FormField,
@@ -34,13 +42,15 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/hooks/use-toast'
 import { Product } from '@/interfaces/models'
+import { cn } from '@/lib/utils'
 import { productSchema } from '@/schemas/productForm'
 import useCategoryStore from '@/stores/categoryStore'
 import useProductStore from '@/stores/productStore'
+import useSupplierStore from '@/stores/supplierStore'
 import { format } from '@formkit/tempo'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { subDays } from 'date-fns'
-import { CalendarIcon, Slash } from 'lucide-react'
+import { CalendarIcon, Check, ChevronsUpDown, Slash } from 'lucide-react'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
@@ -50,12 +60,16 @@ const CreateProduct = () => {
   const categories = useCategoryStore((state) => state.categories)
   const getCategories = useCategoryStore((state) => state.getCategories)
 
+  const suppliers = useSupplierStore((state) => state.suppliers)
+  const getSuppliers = useSupplierStore((state) => state.getSuppliers)
+
   const createProduct = useProductStore((state) => state.createProduct)
 
   const { toast } = useToast()
 
   useEffect(() => {
     getCategories()
+    getSuppliers()
   }, [])
 
   const form = useForm<z.infer<typeof productSchema>>({
@@ -80,7 +94,8 @@ const CreateProduct = () => {
       precio_venta: data.precio_venta,
       fecha_adquisicion: data.fecha_adquisicion.toISOString().split('T')[0],
       fecha_vencimiento: data.fecha_vencimiento.toISOString().split('T')[0],
-      categoria_id: parseInt(data.categoria_id)
+      categoria_nombre: data.categoria_nombre,
+      proveedor_nombre: data.proveedor_nombre
     }
 
     await createProduct(product)
@@ -133,9 +148,9 @@ const CreateProduct = () => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className='grid grid-cols-2 grid-rows-5 gap-4'
+            className='grid grid-cols-2 grid-rows-6 gap-4'
           >
-            <div className='row-span-5 space-y-4'>
+            <div className='row-span-6 flex flex-col justify-between'>
               <FormField
                 control={form.control}
                 name='nombre'
@@ -152,6 +167,69 @@ const CreateProduct = () => {
                         {...field}
                       />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='proveedor_nombre'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Proveedor</FormLabel>
+                    <Popover modal>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant='outline'
+                            role='combobox'
+                            className={cn(
+                              'justify-between w-full',
+                              !field.value && 'text-muted-foreground'
+                            )}
+                          >
+                            {field.value
+                              ? suppliers.find(
+                                  (supplier) => supplier.nombre === field.value
+                                )?.nombre
+                              : 'Selecciona proveedor'}
+                            <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className='p-0'>
+                        <Command>
+                          <CommandInput placeholder='Search language...' />
+                          <CommandList>
+                            <CommandEmpty>No language found.</CommandEmpty>
+                            <CommandGroup>
+                              {suppliers.map((supplier) => (
+                                <CommandItem
+                                  value={supplier.nombre}
+                                  key={supplier.proveedor_id}
+                                  onSelect={() => {
+                                    form.setValue(
+                                      'proveedor_nombre',
+                                      supplier.nombre
+                                    )
+                                  }}
+                                >
+                                  {supplier.nombre}
+                                  <Check
+                                    className={cn(
+                                      'ml-auto',
+                                      supplier.nombre === field.value
+                                        ? 'opacity-100'
+                                        : 'opacity-0'
+                                    )}
+                                  />
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -229,10 +307,10 @@ const CreateProduct = () => {
                 )}
               />
             </div>
-            <div className='row-span-5 space-y-4'>
+            <div className='row-span-6 flex flex-col justify-between'>
               <FormField
                 control={form.control}
-                name='categoria_id'
+                name='categoria_nombre'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel htmlFor={field.name}>Categoría</FormLabel>
@@ -247,7 +325,7 @@ const CreateProduct = () => {
                             {categories.map((category) => (
                               <SelectItem
                                 key={category.categoria_id}
-                                value={category.categoria_id.toString()}
+                                value={category.nombre}
                               >
                                 {category.nombre}
                               </SelectItem>

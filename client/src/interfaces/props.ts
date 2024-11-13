@@ -29,3 +29,8 @@ export interface DeleteDialogProps {
   onDeleteItem: () => void
   description: string
 }
+
+export interface UpdateFormProps {
+  id: number
+  onClose: () => void
+}

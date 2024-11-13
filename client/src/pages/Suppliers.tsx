@@ -1,26 +1,16 @@
-import { getAllSuppliers } from '@/api/suppliers'
-import UpdateProductForm from '@/components/UpdateProductForm'
 import { DataTable } from '@/components/DataTable'
 import Header from '@/components/Header'
-import { Supplier } from '@/interfaces/models'
 import { supplierColumns } from '@/tables/supplier'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
+import useSupplierStore from '@/stores/supplierStore'
 
 const Suppliers = () => {
-  const [suppliers, setSuppliers] = useState<Supplier[]>([])
+  const suppliers = useSupplierStore((state) => state.suppliers)
+  const getSuppliers = useSupplierStore((state) => state.getSuppliers)
 
   useEffect(() => {
-    getProducts()
+    getSuppliers()
   }, [])
-
-  const getProducts = async () => {
-    try {
-      const response = await getAllSuppliers()
-      setSuppliers(response.data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
 
   return (
     <>
@@ -28,8 +18,8 @@ const Suppliers = () => {
       <DataTable
         columns={supplierColumns}
         data={suppliers}
-        customButtonLabel='Añadir nuevo proveedor'
-        customDialogContent={UpdateProductForm}
+        customButtonLabel='Agregar nuevo proveedor'
+        url='/suppliers/create'
       />
     </>
   )

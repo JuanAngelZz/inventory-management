@@ -14,7 +14,10 @@ export type Product = {
   precio_venta: number
   fecha_adquisicion: Date
   fecha_vencimiento: Date
-  categoria_id: number
+  categoria_id?: number
+  proveedor_id?: number
+  categoria_nombre?: string
+  proveedor_nombre?: string
 }
 
 export type Movement = {

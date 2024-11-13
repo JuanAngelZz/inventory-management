@@ -20,8 +20,8 @@ export const supplierSchema = z.object({
     .string({
       required_error: 'El atributo "direccion" es requerido'
     })
-    .min(3, 'La dirección debe tener al menos 3 caracteres'),
-  codigo_telefono_id: z.number({
+    .min(3, 'La direccion debe tener al menos 3 caracteres'),
+  codigo_telefono_id: z.string({
     required_error: 'El atributo "codigo_tlf_id" es requerido'
   })
 })

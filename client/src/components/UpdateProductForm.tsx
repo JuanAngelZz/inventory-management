@@ -1,7 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from './ui/button'
 import {
-  DialogClose,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -16,7 +15,6 @@ import {
   FormMessage
 } from './ui/form'
 import { Input } from './ui/input'
-import { Label } from './ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
 import {
   Select,
@@ -32,7 +30,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { productSchema } from '@/schemas/productForm'
 import { Calendar } from './ui/calendar'
-import { CalendarIcon } from 'lucide-react'
+import { CalendarIcon, Check, ChevronsUpDown } from 'lucide-react'
 import { format } from '@formkit/tempo'
 import useProductStore from '@/stores/productStore'
 import { useEffect } from 'react'
@@ -40,8 +38,19 @@ import useCategoryStore from '@/stores/categoryStore'
 import { subDays } from 'date-fns'
 import { Product } from '@/interfaces/models'
 import { useToast } from '@/hooks/use-toast'
+import useSupplierStore from '@/stores/supplierStore'
+import { cn } from '@/lib/utils'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList
+} from './ui/command'
+import { UpdateFormProps } from '@/interfaces/props'
 
-const UpdateProductForm = ({ id }: { id: number }) => {
+const UpdateProductForm = ({ id, onClose }: UpdateFormProps) => {
   const selectedProduct = useProductStore((state) => state.selectedProduct)
   const getProduct = useProductStore((state) => state.getProduct)
   const updateProduct = useProductStore((state) => state.updateProduct)
@@ -49,11 +58,15 @@ const UpdateProductForm = ({ id }: { id: number }) => {
   const categories = useCategoryStore((state) => state.categories)
   const getCategories = useCategoryStore((state) => state.getCategories)
 
+  const suppliers = useSupplierStore((state) => state.suppliers)
+  const getSuppliers = useSupplierStore((state) => state.getSuppliers)
+
   const { toast } = useToast()
 
   useEffect(() => {
     getProduct(id)
     getCategories()
+    getSuppliers()
   }, [])
 
   const form = useForm<z.infer<typeof productSchema>>({
@@ -67,7 +80,8 @@ const UpdateProductForm = ({ id }: { id: number }) => {
       precio_venta: 0,
       fecha_adquisicion: new Date(),
       fecha_vencimiento: subDays(new Date(), 1),
-      categoria_id: ''
+      categoria_nombre: '',
+      proveedor_nombre: ''
     }
   })
 
@@ -83,14 +97,14 @@ const UpdateProductForm = ({ id }: { id: number }) => {
         precio_venta: selectedProduct.precio_venta,
         fecha_adquisicion: new Date(selectedProduct.fecha_adquisicion),
         fecha_vencimiento: new Date(selectedProduct.fecha_vencimiento),
-        categoria_id: selectedProduct.categoria_id.toString()
+        categoria_nombre: selectedProduct.categoria_nombre,
+        proveedor_nombre: selectedProduct.proveedor_nombre
       })
     }
   }, [selectedProduct])
 
   async function onSubmit(data: z.infer<typeof productSchema>) {
     const product: Product = {
-      producto_id: id,
       nombre: data.nombre,
       descripcion: data.descripcion,
       stock: data.stock,
@@ -98,7 +112,8 @@ const UpdateProductForm = ({ id }: { id: number }) => {
       precio_venta: data.precio_venta,
       fecha_adquisicion: data.fecha_adquisicion.toISOString().split('T')[0],
       fecha_vencimiento: data.fecha_vencimiento.toISOString().split('T')[0],
-      categoria_id: parseInt(data.categoria_id)
+      categoria_nombre: data.categoria_nombre,
+      proveedor_nombre: data.proveedor_nombre
     }
 
     await updateProduct(id, product)
@@ -112,6 +127,8 @@ const UpdateProductForm = ({ id }: { id: number }) => {
         </p>
       )
     })
+
+    onClose()
   }
 
   return (
@@ -123,8 +140,8 @@ const UpdateProductForm = ({ id }: { id: number }) => {
             Ingresa los detalles del producto.
           </DialogDescription>
         </DialogHeader>
-        <div className='grid gap-4 py-4 mt-2'>
-          <div className='grid grid-cols-4 items-center gap-4'>
+        <div className='grid gap-4 py-4 mt-2 grid-cols-2'>
+          <div className='flex flex-col gap-4'>
             <FormField
               control={form.control}
               name='nombre'
@@ -134,19 +151,75 @@ const UpdateProductForm = ({ id }: { id: number }) => {
                     Nombre del producto
                   </FormLabel>
                   <FormControl>
-                    <Input
-                      id={field.name}
-                      className='col-span-3'
-                      placeholder='Nombre'
-                      {...field}
-                    />
+                    <Input id={field.name} placeholder='Nombre' {...field} />
                   </FormControl>
                   <FormMessage />
                 </>
               )}
             />
-          </div>
-          <div className='grid grid-cols-4 items-center gap-4'>
+            <FormField
+              control={form.control}
+              name='proveedor_nombre'
+              render={({ field }) => (
+                <>
+                  <FormLabel>Proveedor</FormLabel>
+                  <Popover modal>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant='outline'
+                          role='combobox'
+                          className={cn(
+                            'justify-between',
+                            !field.value && 'text-muted-foreground'
+                          )}
+                        >
+                          {field.value
+                            ? suppliers.find(
+                                (supplier) => supplier.nombre === field.value
+                              )?.nombre
+                            : 'Selecciona proveedor'}
+                          <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className='w-[200px] p-0'>
+                      <Command>
+                        <CommandInput placeholder='Search language...' />
+                        <CommandList>
+                          <CommandEmpty>No language found.</CommandEmpty>
+                          <CommandGroup>
+                            {suppliers.map((supplier) => (
+                              <CommandItem
+                                value={supplier.nombre}
+                                key={supplier.proveedor_id}
+                                onSelect={() => {
+                                  form.setValue(
+                                    'proveedor_nombre',
+                                    supplier.nombre
+                                  )
+                                }}
+                              >
+                                {supplier.nombre}
+                                <Check
+                                  className={cn(
+                                    'ml-auto',
+                                    supplier.nombre === field.value
+                                      ? 'opacity-100'
+                                      : 'opacity-0'
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </>
+              )}
+            />
             <FormField
               control={form.control}
               name='precio_compra'
@@ -158,7 +231,6 @@ const UpdateProductForm = ({ id }: { id: number }) => {
                   <FormControl>
                     <Input
                       id={field.name}
-                      className='col-span-3'
                       placeholder='Precio'
                       type='number'
                       min={0}
@@ -170,8 +242,6 @@ const UpdateProductForm = ({ id }: { id: number }) => {
                 </>
               )}
             />
-          </div>
-          <div className='grid grid-cols-4 items-center gap-4'>
             <FormField
               control={form.control}
               name='precio_venta'
@@ -183,7 +253,6 @@ const UpdateProductForm = ({ id }: { id: number }) => {
                   <FormControl>
                     <Input
                       id={field.name}
-                      className='col-span-3'
                       placeholder='Precio'
                       type='number'
                       min={0}
@@ -195,8 +264,6 @@ const UpdateProductForm = ({ id }: { id: number }) => {
                 </>
               )}
             />
-          </div>
-          <div className='grid grid-cols-4 items-center gap-4'>
             <FormField
               control={form.control}
               name='descripcion'
@@ -208,7 +275,6 @@ const UpdateProductForm = ({ id }: { id: number }) => {
                   <FormControl>
                     <Textarea
                       id={field.name}
-                      className='col-span-3'
                       placeholder='Descripción'
                       {...field}
                     />
@@ -217,19 +283,18 @@ const UpdateProductForm = ({ id }: { id: number }) => {
                 </>
               )}
             />
-            <Label htmlFor='productPrice' className='text-right'></Label>
           </div>
-          <div className='grid grid-cols-4 items-center gap-4'>
+          <div className='flex flex-col gap-4'>
             <FormField
               control={form.control}
-              name='categoria_id'
+              name='categoria_nombre'
               render={({ field }) => (
                 <>
                   <FormLabel htmlFor={field.name}>Categoría</FormLabel>
                   <FormControl>
                     <Select onValueChange={field.onChange}>
-                      <SelectTrigger className='col-span-3'>
-                        <SelectValue placeholder='Seleccione una categoría' />
+                      <SelectTrigger>
+                        <SelectValue placeholder={field.value} />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
@@ -237,7 +302,7 @@ const UpdateProductForm = ({ id }: { id: number }) => {
                           {categories.map((category) => (
                             <SelectItem
                               key={category.categoria_id}
-                              value={category.categoria_id.toString()}
+                              value={category.nombre}
                             >
                               {category.nombre}
                             </SelectItem>
@@ -250,8 +315,6 @@ const UpdateProductForm = ({ id }: { id: number }) => {
                 </>
               )}
             />
-          </div>
-          <div className='grid grid-cols-4 items-center gap-4'>
             <FormField
               control={form.control}
               name='stock'
@@ -261,7 +324,6 @@ const UpdateProductForm = ({ id }: { id: number }) => {
                   <FormControl>
                     <Input
                       id={field.name}
-                      className='col-span-3'
                       placeholder='Stock'
                       type='number'
                       min={0}
@@ -272,17 +334,15 @@ const UpdateProductForm = ({ id }: { id: number }) => {
                 </>
               )}
             />
-          </div>
-          <div className='grid grid-cols-4 items-center gap-4'>
-            <FormField
-              control={form.control}
-              name='fecha_adquisicion'
-              render={({ field }) => (
-                <>
-                  <FormLabel htmlFor={field.name}>
-                    Fecha de adquisición
-                  </FormLabel>
-                  <div className='col-span-3'>
+            <FormItem>
+              <FormField
+                control={form.control}
+                name='fecha_adquisicion'
+                render={({ field }) => (
+                  <>
+                    <FormLabel htmlFor={field.name}>
+                      Fecha de adquisición
+                    </FormLabel>
                     <Popover modal>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -306,56 +366,54 @@ const UpdateProductForm = ({ id }: { id: number }) => {
                         />
                       </PopoverContent>
                     </Popover>
-                  </div>
-                </>
-              )}
-            />
-          </div>
-          <div className='grid grid-cols-4 items-center gap-4'>
-            <FormField
-              control={form.control}
-              name='fecha_vencimiento'
-              render={({ field }) => (
-                <FormItem className='col-span-4 grid grid-cols-4 items-center gap-4'>
-                  <FormLabel htmlFor={field.name}>
-                    Fecha de vencimiento
-                  </FormLabel>
-                  <Popover modal>
-                    <PopoverTrigger asChild>
-                      <FormControl className='col-span-3'>
-                        <Button variant='outline' className='w-full'>
-                          {field.value ? (
-                            format(field.value, 'YYYY/MM/DD')
-                          ) : (
-                            <span>Seleccionar fecha</span>
-                          )}
-                          <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className='w-auto p-0' align='start'>
-                      <Calendar
-                        mode='single'
-                        selected={field.value}
-                        onSelect={(date) => field.onChange(date)}
-                        disabled={(date) =>
-                          date < new Date() || date < subDays(new Date(), 30)
-                        }
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </FormItem>
-              )}
-            />
+                  </>
+                )}
+              />
+            </FormItem>
+            <FormItem>
+              <FormField
+                control={form.control}
+                name='fecha_vencimiento'
+                render={({ field }) => (
+                  <>
+                    <FormLabel htmlFor={field.name}>
+                      Fecha de vencimiento
+                    </FormLabel>
+                    <Popover modal>
+                      <PopoverTrigger asChild>
+                        <FormControl className='col-span-3'>
+                          <Button variant='outline' className='w-full'>
+                            {field.value ? (
+                              format(field.value, 'YYYY/MM/DD')
+                            ) : (
+                              <span>Seleccionar fecha</span>
+                            )}
+                            <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className='w-auto p-0' align='start'>
+                        <Calendar
+                          mode='single'
+                          selected={field.value}
+                          onSelect={(date) => field.onChange(date)}
+                          disabled={(date) =>
+                            date < new Date() || date < subDays(new Date(), 30)
+                          }
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </>
+                )}
+              />
+            </FormItem>
           </div>
         </div>
         <DialogFooter>
-          <DialogClose asChild>
-            <Button className='mt-5' type='submit'>
-              Guardar producto
-            </Button>
-          </DialogClose>
+          <Button className='mt-5' type='submit'>
+            Guardar producto
+          </Button>
         </DialogFooter>
       </form>
     </Form>

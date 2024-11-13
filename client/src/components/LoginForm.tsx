@@ -52,7 +52,11 @@ const LoginForm = () => {
                 <FormItem className='flex flex-col items-start'>
                   <FormLabel>Contraseña</FormLabel>
                   <FormControl>
-                    <Input placeholder='Contraseña' {...field} />
+                    <Input
+                      type='password'
+                      placeholder='Contraseña'
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

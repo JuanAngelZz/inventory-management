@@ -9,9 +9,13 @@ export const getProducts = async (
   res: Response
 ): Promise<Response> => {
   const query = `
-    SELECT productos.*, categorias.nombre AS categoria_nombre
+    SELECT productos.*, 
+           categorias.nombre AS categoria_nombre,
+           proveedores.nombre AS proveedor_nombre
     FROM productos
     JOIN categorias ON productos.categoria_id = categorias.categoria_id
+    JOIN proveedores ON productos.proveedor_id = proveedores.proveedor_id
+    ORDER BY productos.producto_id DESC
   `
 
   try {
@@ -42,7 +46,15 @@ export const getProduct = async (
   res: Response
 ): Promise<Response> => {
   const { id } = req.params
-  const query = 'SELECT * FROM productos WHERE producto_id = ?'
+  const query = `
+    SELECT productos.*, 
+           categorias.nombre AS categoria_nombre,
+           proveedores.nombre AS proveedor_nombre
+    FROM productos
+    JOIN categorias ON productos.categoria_id = categorias.categoria_id
+    JOIN proveedores ON productos.proveedor_id = proveedores.proveedor_id
+    WHERE productos.producto_id = ?
+  `
 
   try {
     const [row] = await conn.query<RowDataPacket[]>(query, [id])
@@ -61,7 +73,45 @@ export const createProduct = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const product: Product = req.body
+  const { body } = req
+  let product: Product = {} as Product
+
+  const category = body.categoria_nombre
+  const supplier = body.proveedor_nombre
+
+  try {
+    const [rows] = await conn.query<RowDataPacket[]>(
+      'SELECT * FROM categorias WHERE nombre = ?',
+      [category]
+    )
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Category not found' })
+    }
+
+    const [rows2] = await conn.query<RowDataPacket[]>(
+      'SELECT * FROM proveedores WHERE nombre = ?',
+      [supplier]
+    )
+
+    if (rows2.length === 0) {
+      return res.status(404).json({ error: 'Supplier not found' })
+    }
+
+    product = {
+      nombre: body.nombre,
+      descripcion: body.descripcion,
+      precio_compra: body.precio_compra,
+      precio_venta: body.precio_venta,
+      stock: body.stock,
+      fecha_adquisicion: body.fecha_adquisicion,
+      fecha_vencimiento: body.fecha_vencimiento,
+      categoria_id: rows[0].categoria_id,
+      proveedor_id: rows2[0].proveedor_id
+    }
+  } catch (error) {
+    return res.status(500).json({ error })
+  }
 
   const dateAd: string = new Date(product.fecha_adquisicion).toISOString()
 
@@ -91,7 +141,45 @@ export const updateProduct = async (
   res: Response
 ): Promise<Response> => {
   const { id } = req.params
-  const product: Product = req.body
+  const { body } = req
+  let product: Product = {} as Product
+
+  const category = body.categoria_nombre
+  const supplier = body.proveedor_nombre
+
+  try {
+    const [rows] = await conn.query<RowDataPacket[]>(
+      'SELECT * FROM categorias WHERE nombre = ?',
+      [category]
+    )
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Category not found' })
+    }
+
+    const [rows2] = await conn.query<RowDataPacket[]>(
+      'SELECT * FROM proveedores WHERE nombre = ?',
+      [supplier]
+    )
+
+    if (rows2.length === 0) {
+      return res.status(404).json({ error: 'Supplier not found' })
+    }
+
+    product = {
+      nombre: body.nombre,
+      descripcion: body.descripcion,
+      precio_compra: body.precio_compra,
+      precio_venta: body.precio_venta,
+      stock: body.stock,
+      fecha_adquisicion: body.fecha_adquisicion,
+      fecha_vencimiento: body.fecha_vencimiento,
+      categoria_id: rows[0].categoria_id,
+      proveedor_id: rows2[0].proveedor_id
+    }
+  } catch (error) {
+    return res.status(500).json({ error })
+  }
 
   // Filtrar solo los campos proporcionados
   const fields = Object.entries(product).filter(

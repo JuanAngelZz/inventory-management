@@ -14,8 +14,10 @@ export interface Product {
   precio_venta: number
   fecha_adquisicion: string
   fecha_vencimiento: string
-  categoria_id: number
+  categoria_id?: number
   categoria_nombre?: string
+  proveedor_id?: number
+  proveedor_nombre?: string
 }
 
 export interface Supplier {
@@ -24,7 +26,7 @@ export interface Supplier {
   tipo: string
   telefono: string
   direccion: string
-  codigo_telefono_id: string
+  codigo_telefono_id: number
 }
 
 export interface Movement {

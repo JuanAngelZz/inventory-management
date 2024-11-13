@@ -13,6 +13,7 @@ import Administrate from './pages/Administrate'
 import Users from './pages/Users'
 import Backup from './pages/Backup'
 import Migrate from './pages/Migrate'
+import CreateSupplier from './pages/CreateSupplier'
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path='products' element={<Products />} />
           <Route path='products/create' element={<CreateProduct />} />
           <Route path='suppliers' element={<Suppliers />} />
+          <Route path='suppliers/create' element={<CreateSupplier />} />
           <Route path='categories' element={<Categories />} />
           <Route path='administrate' element={<Administrate />} />
           <Route path='administrate/users' element={<Users />} />

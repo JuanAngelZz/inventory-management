@@ -7,7 +7,7 @@ export const getCarrierCodes = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const query = 'SELECT * FROM codigo_tlf'
+  const query = 'SELECT * FROM codigos_telefono'
 
   try {
     const [rows] = await conn.query<RowDataPacket[]>(query)
@@ -23,7 +23,7 @@ export const createCarrierCode = async (
   res: Response
 ): Promise<Response> => {
   const carrierCode: CarrierCode = req.body
-  const query = 'INSERT INTO codigo_tlf SET ?'
+  const query = 'INSERT INTO codigos_telefono SET ?'
 
   try {
     await conn.query(query, carrierCode)
@@ -39,7 +39,7 @@ export const deleteCarrierCode = async (
   res: Response
 ): Promise<Response> => {
   const { id } = req.params
-  const query = 'DELETE FROM codigo_tlf WHERE id = ?'
+  const query = 'DELETE FROM codigos_telefono WHERE id = ?'
 
   try {
     const [row] = await conn.query<ResultSetHeader>(query, id)

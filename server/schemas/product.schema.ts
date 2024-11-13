@@ -28,9 +28,14 @@ export const productSchema = z.object({
   fecha_vencimiento: z.string({
     required_error: 'El atributo "fecha_vencimiento" es requerido'
   }),
-  categoria_id: z
-    .number({
-      required_error: 'El atributo "categoria_id" es requerido'
+  categoria_nombre: z
+    .string({
+      required_error: 'El atributo "categoria_nombre" es requerido'
     })
-    .min(0)
+    .min(3, 'El nombre de la categoría debe tener al menos 3 caracteres'),
+  proveedor_nombre: z
+    .string({
+      required_error: 'El atributo "proveedor_nombre" es requerido'
+    })
+    .min(3, 'El nombre del proveedor debe tener al menos 3 caracteres')
 })

@@ -7,26 +7,13 @@ import {
   updateProduct
 } from '../api/products'
 import { Product } from '@/interfaces/models'
-
-interface ProductStore {
-  products: Product[]
-  selectedProduct: Product | null
-
-  setProducts: (products: Product[]) => void
-  setSelectedProduct: (product: Product) => void
-
-  getProducts: () => Promise<void>
-  getProduct: (id: number) => Promise<void>
-  createProduct: (product: Product) => Promise<void>
-  updateProduct: (id: number, product: Product) => Promise<void>
-  deleteProduct: (id: number) => Promise<void>
-}
+import { ProductStore } from '@/interfaces/stores'
 
 const useProductStore = create<ProductStore>((set, get) => ({
   products: [],
   selectedProduct: null,
 
-  setProducts: (products) => set({ products }),
+  setProducts: (products: Product[]) => set({ products }),
   setSelectedProduct: (product: Product) => set({ selectedProduct: product }),
 
   getProducts: async () => {
@@ -47,7 +34,7 @@ const useProductStore = create<ProductStore>((set, get) => ({
     }
   },
 
-  createProduct: async (product) => {
+  createProduct: async (product: Product) => {
     try {
       await createProduct(product)
     } catch (error) {
@@ -55,7 +42,7 @@ const useProductStore = create<ProductStore>((set, get) => ({
     }
   },
 
-  updateProduct: async (id, product) => {
+  updateProduct: async (id, product: Product) => {
     try {
       await updateProduct(id, product)
       get().getProducts()
