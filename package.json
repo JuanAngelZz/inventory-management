@@ -20,6 +20,7 @@
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.11.0",
+    "mysqldump": "^3.2.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

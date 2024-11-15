@@ -84,9 +84,11 @@ const Administrate = () => {
             />
           </CardHeader>
           <CardContent className='p-4 flex-grow'>
-            <CardTitle className='text-xl font-semibold mb-2'>Migrar</CardTitle>
+            <CardTitle className='text-xl font-semibold mb-2'>
+              Restaurar
+            </CardTitle>
             <CardDescription className='text-gray-700 mb-4'>
-              Gestionar y realizar la migración de la base de datos
+              Gestionar y realizar la restauracion de la base de datos
             </CardDescription>
           </CardContent>
           <CardFooter className='p-4 bg-gray-100'>

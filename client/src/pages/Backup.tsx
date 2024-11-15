@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,8 +9,38 @@ import {
 } from '@/components/ui/breadcrumb'
 import { Slash } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
+import { useToast } from '@/hooks/use-toast'
+import { Progress } from '@/components/ui/progress'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import drivepng from '../assets/Drive.png'
+import { createBackup } from '@/api/backup'
 
 const Backup = () => {
+  const { toast } = useToast()
+
+  const [progress, setProgress] = useState(0)
+
+  // useEffect(() => {
+  //   const timer = setTimeout(() => setProgress(66), 500)
+  //   return () => clearTimeout(timer)
+  // }, [])
+
+  const handleBackup = async () => {
+    try {
+      setProgress(1)
+      await createBackup()
+      toast({
+        title: 'Respaldo realizado',
+        description: 'Se ha realizado el respaldo de la base de datos'
+      })
+    } catch (error) {
+      console.error('Error al realizar el respaldo:', error)
+    } finally {
+      setTimeout(() => setProgress(100), 500)
+    }
+  }
+
   return (
     <>
       <header className='mb-4'>
@@ -40,7 +71,29 @@ const Backup = () => {
           </Breadcrumb>
         </section>
       </header>
-      <main></main>
+      <main className='w-full h-screen flex flex-col items-center justify-center'>
+        <Card className='w-[600px]'>
+          <CardHeader>
+            <h3 className='text-lg font-semibold text-center'>
+              Realizar respaldo
+            </h3>
+            <img src={drivepng} className='w-full h-48 object-scale-down' />
+          </CardHeader>
+          <CardContent>
+            <div className='flex justify-center'>
+              <Button
+                onClick={handleBackup}
+                className='bg-green-600 hover:bg-green-700'
+              >
+                Iniciar
+              </Button>
+            </div>
+            <div className='flex justify-center mt-4'>
+              <Progress value={progress} className='w-[80%]' />
+            </div>
+          </CardContent>
+        </Card>
+      </main>
     </>
   )
 }
