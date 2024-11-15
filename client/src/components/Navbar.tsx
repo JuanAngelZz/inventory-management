@@ -65,14 +65,16 @@ const Navbar = () => {
               <ChartColumnStacked className='mr-2 h-6 w-6' /> Categorías
             </Button>
           </Link>
-          <Link to='/administrate'>
-            <Button
-              variant='ghost'
-              className='w-full text-white text-lg font-bold'
-            >
-              <MonitorCog className='mr-2 h-6 w-6' /> Administrar
-            </Button>
-          </Link>
+          {user.rol === 'administrador' && (
+            <Link to='/administrate'>
+              <Button
+                variant='ghost'
+                className='w-full text-white text-lg font-bold'
+              >
+                <MonitorCog className='mr-2 h-6 w-6' /> Administrar
+              </Button>
+            </Link>
+          )}
         </ul>
         <section>
           <p className='text-white leading-7 '>

@@ -1,4 +1,25 @@
-import { CarrierCode, Category, Movement, Product, Supplier } from './models'
+import {
+  CarrierCode,
+  Category,
+  Movement,
+  Product,
+  Supplier,
+  User
+} from './models'
+
+export interface UserStore {
+  users: User[]
+  selectedUser: User | null
+
+  setUsers: (user: User[]) => void
+  setSelectedUser: (user: User) => void
+
+  getUsers: () => Promise<void>
+  getUser: (id: number) => Promise<void>
+  createUser: (user: User) => Promise<void>
+  updateUser: (id: number, user: User) => Promise<void>
+  deleteUser: (id: number) => Promise<void>
+}
 
 export interface ProductStore {
   products: Product[]

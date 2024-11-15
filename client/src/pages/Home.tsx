@@ -9,8 +9,8 @@ import {
 } from '@/components/ui/card'
 import { useNavigate } from 'react-router-dom'
 import productpng from '../assets/Product.png'
-import categorypng from '../assets/Category.png'
-import movementpng from '../assets/Movement.jpeg'
+import supplierpng from '../assets/Supplier.png'
+import movementpng from '../assets/Movement.png'
 
 const Home = () => {
   const navigate = useNavigate()
@@ -78,22 +78,22 @@ const Home = () => {
         <Card className='bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300'>
           <CardHeader className='relative'>
             <img
-              src={categorypng}
+              src={supplierpng}
               alt='Elegant Watch'
               className='w-full h-48 object-scale-down'
             />
           </CardHeader>
           <CardContent className='p-4 flex-grow'>
             <CardTitle className='text-xl font-semibold mb-2'>
-              Categorías
+              Proveedores
             </CardTitle>
             <CardDescription className='text-gray-700 mb-4'>
-              Gestionar las categorías de los productos
+              Gestionar los proveedores de productos
             </CardDescription>
           </CardContent>
           <CardFooter className='p-4 bg-gray-100'>
             <Button
-              onClick={() => navigate('/categories')}
+              onClick={() => navigate('/suppliers')}
               className='w-full bg-slate-600'
             >
               Ir

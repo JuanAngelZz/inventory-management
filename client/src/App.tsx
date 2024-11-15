@@ -16,6 +16,7 @@ import Migrate from './pages/Migrate'
 import CreateSupplier from './pages/CreateSupplier'
 import CreateMovement from './pages/CreateMovement'
 import CreateCategory from './pages/CreateCategory'
+import CreateUser from './pages/CreateUser'
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
           <Route path='categories/create' element={<CreateCategory />} />
           <Route path='administrate' element={<Administrate />} />
           <Route path='administrate/users' element={<Users />} />
+          <Route path='administrate/users/create' element={<CreateUser />} />
           <Route path='administrate/backup' element={<Backup />} />
           <Route path='administrate/migrate' element={<Migrate />} />
         </Route>

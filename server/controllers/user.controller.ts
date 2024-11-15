@@ -105,3 +105,79 @@ export const verifyUser = async (req: Request, res: Response) => {
     }
   })
 }
+
+export const getUsers = async (req: Request, res: Response) => {
+  try {
+    const [rows] = await conn.query<RowDataPacket[]>('SELECT * FROM usuarios')
+
+    return res.json(rows)
+  } catch (error) {
+    return res.status(500).json({ error })
+  }
+}
+
+export const getUser = async (req: Request, res: Response) => {
+  const { id } = req.params
+
+  try {
+    const [rows] = await conn.query<RowDataPacket[]>(
+      'SELECT * FROM usuarios WHERE usuario_id = ?',
+      [id]
+    )
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' })
+    }
+
+    return res.json(rows[0])
+  } catch (error) {
+    return res.status(500).json({ error })
+  }
+}
+
+export const updateUser = async (req: Request, res: Response) => {
+  const { id } = req.params
+  const user: User = req.body
+  const encryptedPassword = await bcrypt.hash(user.contrasena, 10)
+  user.contrasena = encryptedPassword
+
+  try {
+    const [rows] = await conn.query<RowDataPacket[]>(
+      'SELECT * FROM usuarios WHERE usuario_id = ?',
+      [id]
+    )
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' })
+    }
+
+    const query = 'UPDATE usuarios SET ? WHERE usuario_id = ?'
+    await conn.query(query, [user, id])
+
+    return res.sendStatus(204)
+  } catch (error) {
+    return res.status(500).json({ error })
+  }
+}
+
+export const deleteUser = async (req: Request, res: Response) => {
+  const { id } = req.params
+
+  try {
+    const [rows] = await conn.query<RowDataPacket[]>(
+      'SELECT * FROM usuarios WHERE usuario_id = ?',
+      [id]
+    )
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' })
+    }
+
+    const query = 'DELETE FROM usuarios WHERE usuario_id = ?'
+    await conn.query(query, [id])
+
+    return res.sendStatus(204)
+  } catch (error) {
+    return res.status(500).json({ error })
+  }
+}

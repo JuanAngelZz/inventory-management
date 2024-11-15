@@ -26,6 +26,11 @@ export interface ErrorState extends AxiosError {
   error?: string
 }
 
+// Respuesta Usuarios
+
+export type GetUsersResponse = AxiosResponse<User[]>
+export type GetUserResponse = AxiosResponse<User>
+
 // Respuesta Productos
 
 export type GetProductResponse = AxiosResponse<Product>

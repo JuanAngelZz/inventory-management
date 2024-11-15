@@ -1,3 +1,4 @@
+import { DataTable } from '@/components/DataTable'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -6,10 +7,20 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
+import useUserStore from '@/stores/userStore'
+import { usersColumns } from '@/tables/users'
 import { Slash } from 'lucide-react'
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 const Users = () => {
+  const users = useUserStore((state) => state.users)
+  const getUsers = useUserStore((state) => state.getUsers)
+
+  useEffect(() => {
+    getUsers()
+  }, [])
+
   return (
     <>
       <header className='mb-4'>
@@ -40,7 +51,13 @@ const Users = () => {
           </Breadcrumb>
         </section>
       </header>
-      <main></main>
+      <DataTable
+        columns={usersColumns}
+        data={users}
+        url='create'
+        searchFor='nombre'
+        searchPlaceholder='Buscar por nombre de usuario'
+      />
     </>
   )
 }
