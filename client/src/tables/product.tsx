@@ -18,6 +18,7 @@ import useProductStore from '@/stores/productStore'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import UpdateProductForm from '@/components/UpdateProductForm'
 import { useState } from 'react'
+import { useAuth } from '@/contexts/authContext'
 
 export const productColumns: ColumnDef<Product>[] = [
   {
@@ -177,6 +178,7 @@ export const productColumns: ColumnDef<Product>[] = [
       const { toast } = useToast()
       const deleteProduct = useProductStore((state) => state.deleteProduct)
       const [open, setOpen] = useState(false)
+      const { user } = useAuth()
 
       const onClose = () => {
         setOpen(false)
@@ -193,6 +195,10 @@ export const productColumns: ColumnDef<Product>[] = [
         } catch (error) {
           console.log(error)
         }
+      }
+
+      if (user.rol !== 'administrador') {
+        return null
       }
 
       return (

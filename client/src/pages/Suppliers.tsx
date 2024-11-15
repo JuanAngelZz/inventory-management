@@ -3,10 +3,12 @@ import Header from '@/components/Header'
 import { supplierColumns } from '@/tables/supplier'
 import { useEffect } from 'react'
 import useSupplierStore from '@/stores/supplierStore'
+import { useAuth } from '@/contexts/authContext'
 
 const Suppliers = () => {
   const suppliers = useSupplierStore((state) => state.suppliers)
   const getSuppliers = useSupplierStore((state) => state.getSuppliers)
+  const { user } = useAuth()
 
   useEffect(() => {
     getSuppliers()
@@ -22,6 +24,7 @@ const Suppliers = () => {
         url='/suppliers/create'
         searchFor='nombre'
         searchPlaceholder='Buscar por nombre de proveedor'
+        rol={user?.rol}
       />
     </>
   )

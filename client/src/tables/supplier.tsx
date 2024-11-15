@@ -18,6 +18,7 @@ import { useState } from 'react'
 import DeleteDialog from '@/components/DeleteDialog'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import UpdateSupplierForm from '@/components/UpdateSupplierForm'
+import { useAuth } from '@/contexts/authContext'
 
 export const supplierColumns: ColumnDef<Supplier>[] = [
   {
@@ -117,6 +118,7 @@ export const supplierColumns: ColumnDef<Supplier>[] = [
       const { toast } = useToast()
       const deleteSupplier = useSupplierStore((state) => state.deleteSupplier)
       const [open, setOpen] = useState(false)
+      const { user } = useAuth()
 
       const onClose = () => {
         setOpen(false)
@@ -133,6 +135,10 @@ export const supplierColumns: ColumnDef<Supplier>[] = [
         } catch (error) {
           console.log(error)
         }
+      }
+
+      if (user.rol !== 'administrador') {
+        return null
       }
 
       return (

@@ -2,15 +2,22 @@ import { Input } from './ui/input'
 import { Button } from './ui/button'
 import { PackagePlus } from 'lucide-react'
 import { MyTableHeadProps } from '@/interfaces/props'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 const MyTableHead = ({
   filterValue,
   onFilterChange,
   placeholder = 'Buscar',
   customButtonLabel = 'Crear nueva instancia',
-  url
+  url,
+  rol
 }: MyTableHeadProps) => {
+  const { pathname } = useLocation()
+
+  const shouldRenderButton =
+    !(pathname === '/suppliers' || pathname === '/products') ||
+    rol !== 'usuario'
+
   return (
     <div className='w-full flex items-center justify-between py-4'>
       <Input
@@ -19,11 +26,14 @@ const MyTableHead = ({
         onChange={(event) => onFilterChange(event.target.value)}
         className='max-w-sm'
       />
-      <Link to={url}>
-        <Button variant='outline'>
-          <PackagePlus className='mr-2 h-4 w-4' /> {customButtonLabel}
-        </Button>
-      </Link>
+      {shouldRenderButton && (
+        <Link to={url}>
+          <Button variant={'outline'} className='flex items-center gap-2'>
+            <PackagePlus />
+            {customButtonLabel}
+          </Button>
+        </Link>
+      )}
     </div>
   )
 }

@@ -77,6 +77,11 @@ export const usersColumns: ColumnDef<User>[] = [
   },
   {
     id: 'actions',
+    header: () => (
+      <Button variant='ghost' className='w-full text-center'>
+        Acciones
+      </Button>
+    ),
     cell: ({ row }) => {
       const { toast } = useToast()
       const deleteUser = useUserStore((state) => state.deleteUser)
@@ -101,13 +106,17 @@ export const usersColumns: ColumnDef<User>[] = [
       }
 
       if (row.getValue('usuario_id') === user?.usuario_id) {
-        return null
+        return (
+          <p className='text-center text-red-800 '>
+            No se puede eliminar el usuario actual
+          </p>
+        )
       }
 
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant='ghost' className='h-8 w-8 p-0'>
+            <Button variant='ghost' className='h-8 w-full p-0'>
               <span className='sr-only'>Open menu</span>
               <MoreHorizontal className='h-4 w-4' />
             </Button>

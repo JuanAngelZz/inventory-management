@@ -23,6 +23,7 @@ export interface MyTableHeadProps {
   placeholder?: string
   customButtonLabel?: string // Add custom button label
   url: string
+  rol: 'administrador' | 'usuario'
 }
 
 export interface DeleteDialogProps {

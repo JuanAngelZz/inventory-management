@@ -33,12 +33,14 @@ export function DataTable<TData, TValue>({
   customButtonLabel,
   url,
   searchFor,
-  searchPlaceholder
+  searchPlaceholder,
+  rol
 }: DataTableProps<TData, TValue> & {
   customButtonLabel?: string
   url: string
   searchFor: string
   searchPlaceholder: string
+  rol: 'administrador' | 'usuario'
 }) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -97,6 +99,7 @@ export function DataTable<TData, TValue>({
         placeholder={searchPlaceholder}
         customButtonLabel={customButtonLabel}
         url={url}
+        rol={rol}
       />
       <div className='rounded-md border'>
         <Table>
