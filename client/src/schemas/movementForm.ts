@@ -12,8 +12,8 @@ export const movementSchema = z.object({
     .number({
       required_error: 'El atributo "cantidad" es requerido'
     })
-    .min(0),
-  fecha: z.string().default(new Date().toISOString()),
+    .min(1, 'La cantidad debe ser mayor a 0'),
+  fecha: z.date().optional().default(new Date()),
   producto_nombre: z
     .string({
       required_error: 'El atributo "producto_nombre" es requerido'

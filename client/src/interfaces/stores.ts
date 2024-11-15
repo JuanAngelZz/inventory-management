@@ -1,4 +1,4 @@
-import { CarrierCode, Category, Product, Supplier } from './models'
+import { CarrierCode, Category, Movement, Product, Supplier } from './models'
 
 export interface ProductStore {
   products: Product[]
@@ -23,9 +23,9 @@ export interface CategoryStore {
 
   getCategories: () => Promise<void>
   getCategory: (id: number) => Promise<void>
-  // createCategory: (category: Category) => Promise<void>
-  // updateCategory: (id: number, category: Category) => Promise<void>
-  // deleteCategory: (id: number) => Promise<void>
+  createCategory: (category: Category) => Promise<void>
+  updateCategory: (id: number, category: Category) => Promise<void>
+  deleteCategory: (id: number) => Promise<void>
 }
 
 export interface SupplierStore {
@@ -40,6 +40,20 @@ export interface SupplierStore {
   createSupplier: (supplier: Supplier) => Promise<void>
   updateSupplier: (id: number, supplier: Supplier) => Promise<void>
   deleteSupplier: (id: number) => Promise<void>
+}
+
+export interface MovementStore {
+  movements: Movement[]
+  selectedMovement: Movement | null
+
+  setMovements: (movements: Movement[]) => void
+  setSelectedMovement: (movement: Movement) => void
+
+  getMovements: () => Promise<void>
+  getMovement: (id: number) => Promise<void>
+  createMovement: (movement: Movement) => Promise<void>
+  updateMovement: (id: number, movement: Movement) => Promise<void>
+  deleteMovement: (id: number) => Promise<void>
 }
 
 export interface CarrierCodeStore {

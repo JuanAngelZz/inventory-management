@@ -14,6 +14,8 @@ import Users from './pages/Users'
 import Backup from './pages/Backup'
 import Migrate from './pages/Migrate'
 import CreateSupplier from './pages/CreateSupplier'
+import CreateMovement from './pages/CreateMovement'
+import CreateCategory from './pages/CreateCategory'
 
 function App() {
   return (
@@ -23,11 +25,13 @@ function App() {
         <Route path='/*' element={<Dashboard />}>
           <Route path='' element={<Home />} />
           <Route path='movements' element={<Movements />} />
+          <Route path='movements/create' element={<CreateMovement />} />
           <Route path='products' element={<Products />} />
           <Route path='products/create' element={<CreateProduct />} />
           <Route path='suppliers' element={<Suppliers />} />
           <Route path='suppliers/create' element={<CreateSupplier />} />
           <Route path='categories' element={<Categories />} />
+          <Route path='categories/create' element={<CreateCategory />} />
           <Route path='administrate' element={<Administrate />} />
           <Route path='administrate/users' element={<Users />} />
           <Route path='administrate/backup' element={<Backup />} />

@@ -1,36 +1,31 @@
-import { getAllCategories } from '@/api/categories'
-import UpdateProductForm from '@/components/UpdateProductForm'
-import { DataTable } from '@/components/DataTable'
 import Header from '@/components/Header'
-import { Category } from '@/interfaces/models'
-import { categoryColumns } from '@/tables/category'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
+import useCategoryStore from '@/stores/categoryStore'
+import { Button } from '@/components/ui/button'
+import CategoryItem from '@/components/CategoryItem'
+import { Link } from 'react-router-dom'
 
 const Categories = () => {
-  const [categories, setCategories] = useState<Category[]>([])
+  const categories = useCategoryStore((state) => state.categories)
+  const getCategories = useCategoryStore((state) => state.getCategories)
 
   useEffect(() => {
     getCategories()
   }, [])
 
-  const getCategories = async () => {
-    try {
-      const response = await getAllCategories()
-      setCategories(response.data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
   return (
     <>
       <Header page='Categorías' />
-      <DataTable
-        columns={categoryColumns}
-        data={categories}
-        customButtonLabel='Añadir nueva categoría'
-        customDialogContent={UpdateProductForm}
-      />
+      <main>
+        <Button variant='outline' className='float-end' asChild>
+          <Link to='create'>Agregar nueva Categoría</Link>
+        </Button>
+        <div className='w-full mt-12 grid grid-cols-4 grid-rows-4 gap-4'>
+          {categories.map((category) => (
+            <CategoryItem key={category.categoria_id} category={category} />
+          ))}
+        </div>
+      </main>
     </>
   )
 }

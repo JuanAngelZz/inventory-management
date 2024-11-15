@@ -24,7 +24,7 @@ export type Movement = {
   movimiento_id?: number
   tipo: 'entrada' | 'salida'
   cantidad: number
-  fecha: Date
+  fecha: string
   producto_id: number
 }
 

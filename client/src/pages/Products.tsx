@@ -21,6 +21,8 @@ const Products = () => {
         data={products}
         customButtonLabel='Añadir nuevo producto'
         url='/products/create'
+        searchFor='nombre'
+        searchPlaceholder='Buscar por nombre de producto'
       />
     </>
   )

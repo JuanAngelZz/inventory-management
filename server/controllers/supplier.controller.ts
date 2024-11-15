@@ -12,6 +12,7 @@ export const getSuppliers = async (
     CONCAT(codigos_telefono.codigo_operadora, '-', proveedores.telefono) AS numero_telefono
     FROM proveedores
     JOIN codigos_telefono ON proveedores.codigo_telefono_id = codigos_telefono.codigo_telefono_id
+    ORDER BY proveedores.proveedor_id DESC
   `
 
   try {

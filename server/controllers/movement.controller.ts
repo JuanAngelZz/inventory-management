@@ -12,6 +12,7 @@ export const getMovements = async (
     SELECT movimientos.*, productos.nombre AS producto_nombre 
     FROM movimientos
     JOIN productos ON movimientos.producto_id = productos.producto_id
+    ORDER BY movimientos.movimiento_id DESC
   `
 
   try {
@@ -20,7 +21,14 @@ export const getMovements = async (
     const movements = rows.map((movement) => {
       return {
         ...movement,
-        fecha: format(new Date(movement.fecha), 'YYYY-MM-DD')
+        fecha: format(
+          new Date(movement.fecha),
+          {
+            date: 'medium',
+            time: 'short'
+          },
+          'es'
+        )
       }
     })
 
@@ -57,8 +65,31 @@ export const createMovement = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const movement: Movement = req.body
-  movement.fecha = movement.fecha || new Date()
+  const { body } = req
+  let movement: Movement = {} as Movement
+
+  const product = body.producto_nombre
+
+  try {
+    const [rows] = await conn.query<RowDataPacket[]>(
+      'SELECT * FROM productos WHERE nombre = ?',
+      [product]
+    )
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Product not found' })
+    }
+
+    movement = {
+      tipo: body.tipo,
+      cantidad: body.cantidad,
+      fecha:
+        format(body.fecha, 'YYYY-MM-DD HH:mm') || new Date().toDateString(),
+      producto_id: rows[0].producto_id
+    }
+  } catch (error) {
+    return res.status(500).json({ error })
+  }
 
   const query = 'INSERT INTO movimientos SET ?'
 
@@ -67,7 +98,7 @@ export const createMovement = async (
 
     if (movement.tipo === 'salida') {
       const queryStock =
-        'UPDATE productos SET stock = stock - ? WHERE movimiento_id = ?'
+        'UPDATE productos SET stock = stock - ? WHERE producto_id = ?'
       await conn.query<RowDataPacket[]>(queryStock, [
         movement.cantidad,
         movement.producto_id
@@ -76,7 +107,7 @@ export const createMovement = async (
 
     if (movement.tipo === 'entrada') {
       const queryStock =
-        'UPDATE productos SET stock = stock + ? WHERE movimiento_id = ?'
+        'UPDATE productos SET stock = stock + ? WHERE producto_id = ?'
       await conn.query<RowDataPacket[]>(queryStock, [
         movement.cantidad,
         movement.producto_id

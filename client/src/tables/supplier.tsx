@@ -21,24 +21,6 @@ import UpdateSupplierForm from '@/components/UpdateSupplierForm'
 
 export const supplierColumns: ColumnDef<Supplier>[] = [
   {
-    accessorKey: 'proveedor_id',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant='ghost'
-          className='w-full text-center'
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          ID
-          <ArrowUpDown className='ml-2 h-4 w-4' />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      return <p className='text-center'>{row.getValue('proveedor_id')}</p>
-    }
-  },
-  {
     accessorKey: 'nombre',
     header: ({ column }) => {
       return (
@@ -108,6 +90,24 @@ export const supplierColumns: ColumnDef<Supplier>[] = [
     },
     cell: ({ row }) => {
       return <p className='text-center'>{row.getValue('direccion')}</p>
+    }
+  },
+  {
+    accessorKey: 'proveedor_id',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          className='w-full text-center'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          ID
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      return <p className='text-center'>{row.getValue('proveedor_id')}</p>
     }
   },
   {

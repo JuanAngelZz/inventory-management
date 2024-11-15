@@ -30,16 +30,16 @@ export interface Supplier {
 }
 
 export interface Movement {
-  movimiento_id: number
+  movimiento_id?: number
   tipo: 'entrada' | 'salida'
   cantidad: number
-  fecha: Date
-  producto_id: number
-  producto_nombre: string
+  fecha: string
+  producto_id?: number
+  producto_nombre?: string
 }
 
 export interface Category {
-  categoria_id: number
+  categoria_id?: number
   nombre: string
 }
 

@@ -20,6 +20,8 @@ const Suppliers = () => {
         data={suppliers}
         customButtonLabel='Agregar nuevo proveedor'
         url='/suppliers/create'
+        searchFor='nombre'
+        searchPlaceholder='Buscar por nombre de proveedor'
       />
     </>
   )

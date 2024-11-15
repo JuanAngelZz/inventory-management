@@ -31,10 +31,14 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   customButtonLabel,
-  url
+  url,
+  searchFor,
+  searchPlaceholder
 }: DataTableProps<TData, TValue> & {
   customButtonLabel?: string
   url: string
+  searchFor: string
+  searchPlaceholder: string
 }) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -85,12 +89,12 @@ export function DataTable<TData, TValue>({
     <>
       <MyTableHead
         filterValue={
-          (table.getColumn('nombre')?.getFilterValue() as string) ?? ''
+          (table.getColumn(searchFor)?.getFilterValue() as string) ?? ''
         }
         onFilterChange={(value) =>
-          table.getColumn('nombre')?.setFilterValue(value)
+          table.getColumn(searchFor)?.setFilterValue(value)
         }
-        placeholder='Buscar por nombre'
+        placeholder={searchPlaceholder}
         customButtonLabel={customButtonLabel}
         url={url}
       />

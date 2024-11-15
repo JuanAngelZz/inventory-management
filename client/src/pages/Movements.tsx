@@ -1,26 +1,16 @@
-import { getAllMovements } from '@/api/movements'
-import UpdateProductForm from '@/components/UpdateProductForm'
 import { DataTable } from '@/components/DataTable'
 import Header from '@/components/Header'
-import { Movement } from '@/interfaces/models'
 import { movementColumns } from '@/tables/movement'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
+import useMovementStore from '@/stores/movementStore'
 
 const Movements = () => {
-  const [movements, setMovements] = useState<Movement[]>([])
+  const movements = useMovementStore((state) => state.movements)
+  const getMovements = useMovementStore((state) => state.getMovements)
 
   useEffect(() => {
     getMovements()
   }, [])
-
-  const getMovements = async () => {
-    try {
-      const response = await getAllMovements()
-      setMovements(response.data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
 
   return (
     <>
@@ -29,7 +19,9 @@ const Movements = () => {
         columns={movementColumns}
         data={movements}
         customButtonLabel='Registrar movimiento'
-        customDialogContent={UpdateProductForm}
+        url='/movements/create'
+        searchFor='producto_nombre'
+        searchPlaceholder='Buscar por producto'
       />
     </>
   )

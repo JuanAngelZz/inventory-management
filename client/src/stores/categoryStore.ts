@@ -1,6 +1,12 @@
 import { create } from 'zustand'
 import { Category } from '@/interfaces/models'
-import { getAllCategories, getCategory } from '@/api/categories'
+import {
+  createCategory,
+  deleteCategory,
+  getAllCategories,
+  getCategory,
+  updateCategory
+} from '@/api/categories'
 import { CategoryStore } from '@/interfaces/stores'
 
 const useCategoryStore = create<CategoryStore>((set, get) => ({
@@ -27,25 +33,34 @@ const useCategoryStore = create<CategoryStore>((set, get) => ({
     } catch (error) {
       console.log(error)
     }
+  },
+
+  createCategory: async (category: Category) => {
+    try {
+      await createCategory(category)
+      get().getCategories()
+    } catch (error) {
+      console.log(error)
+    }
+  },
+
+  updateCategory: async (id, category) => {
+    try {
+      await updateCategory(id, category)
+      get().getCategories()
+    } catch (error) {
+      console.log(error)
+    }
+  },
+
+  deleteCategory: async (id) => {
+    try {
+      await deleteCategory(id)
+      get().getCategories()
+    } catch (error) {
+      console.log(error)
+    }
   }
-
-  // updateCategory: async (id, product) => {
-  //   try {
-  //     await updateProduct(id, product)
-  //     get().getCategories()
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // },
-
-  // deleteCategory: async (id) => {
-  //   try {
-  //     await deleteProduct(id)
-  //     get().getCategories()
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
 }))
 
 export default useCategoryStore
