@@ -94,7 +94,7 @@ export const verifyUser = async (req: Request, res: Response) => {
       )
 
       const user = {
-        id: rows[0].id,
+        usuario_id: rows[0].id,
         nombre: rows[0].nombre,
         rol: rows[0].rol
       }

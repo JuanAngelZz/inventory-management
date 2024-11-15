@@ -236,6 +236,9 @@ const UpdateProductForm = ({ id, onClose }: UpdateFormProps) => {
                       min={0}
                       {...field}
                       step={0.01}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value) || 0)
+                      }
                     />
                   </FormControl>
                   <FormMessage />
@@ -258,6 +261,9 @@ const UpdateProductForm = ({ id, onClose }: UpdateFormProps) => {
                       min={0}
                       {...field}
                       step={0.01}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value) || 0)
+                      }
                     />
                   </FormControl>
                   <FormMessage />
@@ -328,6 +334,9 @@ const UpdateProductForm = ({ id, onClose }: UpdateFormProps) => {
                       type='number'
                       min={0}
                       {...field}
+                      onChange={(e) =>
+                        field.onChange(parseInt(e.target.value) || 0)
+                      }
                     />
                   </FormControl>
                   <FormMessage />

@@ -65,19 +65,27 @@ export const createMovement = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const { body } = req
-  let movement: Movement = {} as Movement
+  const { body } = req;
+  let movement: Movement = {} as Movement;
 
-  const product = body.producto_nombre
+  const product = body.producto_nombre;
 
   try {
+    // Obtener el producto por su nombre
     const [rows] = await conn.query<RowDataPacket[]>(
       'SELECT * FROM productos WHERE nombre = ?',
       [product]
-    )
+    );
 
     if (rows.length === 0) {
-      return res.status(404).json({ error: 'Product not found' })
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    const productData = rows[0];
+
+    // Validar si la cantidad de salida es mayor que el stock disponible
+    if (body.tipo === 'salida' && body.cantidad > productData.stock) {
+      return res.status(400).json({ error: 'No hay suficiente stock disponible' });
     }
 
     movement = {
@@ -85,78 +93,37 @@ export const createMovement = async (
       cantidad: body.cantidad,
       fecha:
         format(body.fecha, 'YYYY-MM-DD HH:mm') || new Date().toDateString(),
-      producto_id: rows[0].producto_id
-    }
+      producto_id: productData.producto_id,
+    };
   } catch (error) {
-    return res.status(500).json({ error })
+    return res.status(500).json({ error });
   }
 
-  const query = 'INSERT INTO movimientos SET ?'
+  const query = 'INSERT INTO movimientos SET ?';
 
   try {
-    await conn.query<RowDataPacket[]>(query, movement)
+    await conn.query<RowDataPacket[]>(query, movement);
 
     if (movement.tipo === 'salida') {
       const queryStock =
-        'UPDATE productos SET stock = stock - ? WHERE producto_id = ?'
+        'UPDATE productos SET stock = stock - ? WHERE producto_id = ?';
       await conn.query<RowDataPacket[]>(queryStock, [
         movement.cantidad,
-        movement.producto_id
-      ])
+        movement.producto_id,
+      ]);
     }
 
     if (movement.tipo === 'entrada') {
       const queryStock =
-        'UPDATE productos SET stock = stock + ? WHERE producto_id = ?'
+        'UPDATE productos SET stock = stock + ? WHERE producto_id = ?';
       await conn.query<RowDataPacket[]>(queryStock, [
         movement.cantidad,
-        movement.producto_id
-      ])
+        movement.producto_id,
+      ]);
     }
 
-    return res.sendStatus(201)
+    return res.sendStatus(201);
   } catch (error) {
-    return res.status(500).json({ error })
+    return res.status(500).json({ error });
   }
-}
-
-// export const updateMovement = async (
-//   req: Request,
-//   res: Response
-// ): Promise<Response> => {
-//   const { id } = req.params
-//   const movement: Movement = req.body
-//   const query = 'UPDATE movimientos SET ? WHERE id = ?'
-
-//   try {
-//     const [row] = await conn.query<ResultSetHeader>(query, [movement, id])
-
-//     if (row.affectedRows === 0) {
-//       return res.status(404).json({ error: 'Movement not found' })
-//     }
-
-//     return res.sendStatus(204)
-//   } catch (error) {
-//     return res.status(500).json({ error })
-//   }
-// }
-
-// export const deleteMovement = async (
-//   req: Request,
-//   res: Response
-// ): Promise<Response> => {
-//   const { id } = req.params
-//   const query = 'DELETE FROM movimientos WHERE id = ?'
-
-//   try {
-//     const [row] = await conn.query<ResultSetHeader>(query, [id])
-
-//     if (row.affectedRows === 0) {
-//       return res.status(404).json({ error: 'Movement not found' })
-//     }
-
-//     return res.sendStatus(204)
-//   } catch (error) {
-//     return res.status(500).json({ error })
-//   }
-// }
+};

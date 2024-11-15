@@ -1,3 +1,4 @@
+import { createMovement } from '@/api/movements'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -39,7 +40,6 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/hooks/use-toast'
 import { Movement } from '@/interfaces/models'
 import { cn } from '@/lib/utils'
@@ -57,7 +57,7 @@ import { z } from 'zod'
 const CreateMovement = () => {
   const { toast } = useToast()
 
-  const createMovement = useMovementStore((state) => state.createMovement)
+  const getMovements = useMovementStore((state) => state.getMovements)
 
   const products = useProductStore((state) => state.products)
   const getProducts = useProductStore((state) => state.getProducts)
@@ -83,19 +83,32 @@ const CreateMovement = () => {
 
     console.log(movement)
 
-    await createMovement(movement)
-
-    toast({
-      title: 'Movimiento registrado:',
-      description: (
-        <p>
-          El movimiento ha sido registrado con exito. <br />
-          <strong>
-            <Link to='/movements'>Ir a movimientos</Link>
-          </strong>
-        </p>
-      )
-    })
+    try {
+      await createMovement(movement)
+      getMovements()
+  
+      toast({
+        title: 'Movimiento registrado:',
+        description: (
+          <p>
+            El movimiento ha sido registrado con exito. <br />
+            <strong>
+              <Link to='/movements'>Ir a movimientos</Link>
+            </strong>
+          </p>
+        ),
+      })
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        toast({
+          title: 'Error al registrar movimiento',
+          description: error.response.data.error,
+          variant: 'destructive',
+        })
+      } else {
+        console.error(error);
+      }
+    }
   }
 
   return (
