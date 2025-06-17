@@ -1,10 +1,12 @@
 import mysql, { PoolOptions } from 'mysql2/promise'
+import { DB_HOST, DB_NAME, DB_PASSWORD, DB_USER, DB_PORT } from './config'
 
 const access: PoolOptions = {
-  user: 'root',
-  database: 'ims_upt',
-  password: '',
-  port: 3306
+  user: DB_USER,
+  host: DB_HOST,
+  database: DB_NAME,
+  password: DB_PASSWORD,
+  port: +DB_PORT
 }
 
 const conn = mysql.createPool(access)
