@@ -17,6 +17,9 @@ import CreateSupplier from './pages/CreateSupplier'
 import CreateMovement from './pages/CreateMovement'
 import CreateCategory from './pages/CreateCategory'
 import CreateUser from './pages/CreateUser'
+import Report from './pages/Report'
+import Charts from './pages/Charts'
+import ExpiringProducts from './pages/ExpiringProducts'
 
 function App() {
   return (
@@ -29,15 +32,18 @@ function App() {
           <Route path='movements/create' element={<CreateMovement />} />
           <Route path='products' element={<Products />} />
           <Route path='products/create' element={<CreateProduct />} />
+          <Route path='expiring-products' element={<ExpiringProducts />} />
           <Route path='suppliers' element={<Suppliers />} />
           <Route path='suppliers/create' element={<CreateSupplier />} />
           <Route path='categories' element={<Categories />} />
           <Route path='categories/create' element={<CreateCategory />} />
+          <Route path='charts' element={<Charts />} />
           <Route path='administrate' element={<Administrate />} />
           <Route path='administrate/users' element={<Users />} />
           <Route path='administrate/users/create' element={<CreateUser />} />
           <Route path='administrate/backup' element={<Backup />} />
           <Route path='administrate/migrate' element={<Migrate />} />
+          <Route path='administrate/report' element={<Report />} />
         </Route>
       </Routes>
       <Toaster />

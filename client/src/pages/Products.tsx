@@ -4,6 +4,8 @@ import Header from '@/components/Header'
 import useProductStore from '@/stores/productStore'
 import { productColumns } from '@/tables/product'
 import { useEffect } from 'react'
+import { Button } from '@/components/ui/button'
+import { Link } from 'react-router-dom'
 
 const Products = () => {
   const products = useProductStore((state) => state.products)
@@ -16,6 +18,11 @@ const Products = () => {
   return (
     <>
       <Header page='Productos' />
+      <div className="flex justify-end">
+      <Button className='flex'>
+        <Link to="/expiring-products">Ver productos proximos a vencer</Link>
+      </Button>
+      </div>
       <DataTable
         columns={productColumns}
         data={products}

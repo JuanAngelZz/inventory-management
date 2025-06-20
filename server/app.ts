@@ -9,6 +9,7 @@ import movementRouter from './routes/movement.routes'
 import supplierRouter from './routes/supplier.routes'
 import carrierCodeRouter from './routes/carrierCode.routes'
 import backupRouter from './routes/backup.routes'
+import chatRouter from './routes/chat.routes'
 
 const app = express()
 
@@ -30,5 +31,6 @@ app.use('/api', movementRouter)
 app.use('/api', supplierRouter)
 app.use('/api', carrierCodeRouter)
 app.use('/api', backupRouter)
+app.use('/api', chatRouter)
 
 export default app

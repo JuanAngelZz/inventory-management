@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "@formkit/tempo": "^0.1.2",
+    "@google/genai": "^1.5.1",
     "@types/jsonwebtoken": "^9.0.6",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",

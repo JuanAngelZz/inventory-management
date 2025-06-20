@@ -6,7 +6,8 @@ import {
   House,
   PackageSearch,
   Factory,
-  MonitorCog
+  MonitorCog,
+  ChartArea
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
@@ -72,6 +73,16 @@ const Navbar = () => {
                 className='w-full text-white text-lg font-bold'
               >
                 <MonitorCog className='mr-2 h-6 w-6' /> Administrar
+              </Button>
+            </Link>
+          )}
+          {user.rol === 'administrador' && (
+            <Link to='/charts'>
+              <Button
+                variant='ghost'
+                className='w-full text-white text-lg font-bold'
+              >
+                <ChartArea className='mr-2 h-6 w-6' /> Gráficas
               </Button>
             </Link>
           )}
