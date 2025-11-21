@@ -11,8 +11,8 @@ export const getSuppliers = async (
     SELECT proveedores.*,
     CONCAT(codigos_telefono.codigo_operadora, '-', proveedores.telefono) AS numero_telefono
     FROM proveedores
-    JOIN codigos_telefono ON proveedores.codigo_telefono_id = codigos_telefono.codigo_telefono_id
-    ORDER BY proveedores.proveedor_id DESC
+    JOIN codigos_telefono ON proveedores.codigo_telefono_id = codigos_telefono.id
+    ORDER BY proveedores.id DESC
   `
 
   try {

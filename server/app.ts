@@ -10,6 +10,8 @@ import supplierRouter from './routes/supplier.routes'
 import carrierCodeRouter from './routes/carrierCode.routes'
 import backupRouter from './routes/backup.routes'
 import chatRouter from './routes/chat.routes'
+import migrateRouter from './routes/migrate.routes'
+import seedRouter from './routes/seed.routes'
 
 const app = express()
 
@@ -32,5 +34,7 @@ app.use('/api', supplierRouter)
 app.use('/api', carrierCodeRouter)
 app.use('/api', backupRouter)
 app.use('/api', chatRouter)
+app.use('/api', migrateRouter)
+app.use('/api', seedRouter)
 
 export default app

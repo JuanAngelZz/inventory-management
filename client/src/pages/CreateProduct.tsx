@@ -98,20 +98,34 @@ const CreateProduct = () => {
       proveedor_nombre: data.proveedor_nombre
     }
 
-    await createProduct(product)
+    try {
+      await createProduct(product)
 
-    toast({
-      title: 'Producto creado:',
-      description: (
-        <p>
-          El producto <strong>{data.nombre}</strong> ha sido creado con exito.{' '}
-          <br />
-          <strong>
-            <Link to='/products'>Ir a productos</Link>
-          </strong>
-        </p>
-      )
-    })
+      toast({
+        title: 'Producto creado:',
+        description: (
+          <p>
+            El producto <strong>{data.nombre}</strong> ha sido creado con
+            exito.{' '}
+            <br />
+            <strong>
+              <Link to='/products'>Ir a productos</Link>
+            </strong>
+          </p>
+        )
+      })
+    } catch (error) {
+      toast({
+        title: 'Error al crear el producto:',
+        description: (
+          <p>
+            Hubo un error al crear el producto <strong>{data.nombre}</strong>.
+            Es posible que ya exista un producto con ese nombre.
+          </p>
+        ),
+        variant: 'destructive'
+      })
+    }
   }
 
   return (

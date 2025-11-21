@@ -6,7 +6,8 @@ const access: PoolOptions = {
   host: DB_HOST,
   database: DB_NAME,
   password: DB_PASSWORD,
-  port: +DB_PORT
+  port: +DB_PORT,
+  multipleStatements: true
 }
 
 const conn = mysql.createPool(access)

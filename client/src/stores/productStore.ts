@@ -39,6 +39,7 @@ const useProductStore = create<ProductStore>((set, get) => ({
       await createProduct(product)
     } catch (error) {
       console.log(error)
+      throw error
     }
   },
 

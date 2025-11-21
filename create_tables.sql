@@ -14,7 +14,7 @@ CREATE TABLE categorias (
 -- Tabla de proveedores
 CREATE TABLE proveedores (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  nombre VARCHAR(255) NOT NULL,
+  nombre VARCHAR(255) NOT NULL UNIQUE,
   tipo VARCHAR(100) NOT NULL,
   telefono CHAR(7) NOT NULL,
   direccion VARCHAR(255) NOT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE proveedores (
 -- Tabla de productos
 CREATE TABLE productos (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  nombre VARCHAR(255) NOT NULL,
+  nombre VARCHAR(255) NOT NULL UNIQUE,
   descripcion TEXT NOT NULL,
   stock INT NOT NULL CHECK (stock >= 0),
   precio_compra DECIMAL(10,2) NOT NULL CHECK (precio_compra >= 0),
@@ -51,7 +51,7 @@ CREATE TABLE movimientos (
 -- Tabla de usuarios
 CREATE TABLE usuarios (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  nombre VARCHAR(255) NOT NULL,
+  nombre VARCHAR(255) NOT NULL UNIQUE,
   contrasena VARCHAR(255) NOT NULL,
   rol ENUM('administrador', 'usuario') NOT NULL DEFAULT 'usuario'
 );
@@ -59,4 +59,3 @@ CREATE TABLE usuarios (
 -- Inserta un usuario administrador por defecto con contraseña 'admin123'
 INSERT INTO usuarios (nombre, contrasena, rol)
 VALUES ('admin', '$2b$10$X1GkReUyLL3AXL.fV6ejxuxyHvTrdELstjETLq/K7..T3b21oWv8K', 'administrador');
-

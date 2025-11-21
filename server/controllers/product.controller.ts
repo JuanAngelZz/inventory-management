@@ -13,9 +13,9 @@ export const getProducts = async (
            categorias.nombre AS categoria_nombre,
            proveedores.nombre AS proveedor_nombre
     FROM productos
-    JOIN categorias ON productos.categoria_id = categorias.categoria_id
-    JOIN proveedores ON productos.proveedor_id = proveedores.proveedor_id
-    ORDER BY productos.producto_id DESC
+    JOIN categorias ON productos.categoria_id = categorias.id
+    JOIN proveedores ON productos.proveedor_id = proveedores.id
+    ORDER BY productos.id DESC
   `
 
   try {
@@ -51,9 +51,9 @@ export const getProduct = async (
            categorias.nombre AS categoria_nombre,
            proveedores.nombre AS proveedor_nombre
     FROM productos
-    JOIN categorias ON productos.categoria_id = categorias.categoria_id
-    JOIN proveedores ON productos.proveedor_id = proveedores.proveedor_id
-    WHERE productos.producto_id = ?
+    JOIN categorias ON productos.categoria_id = categorias.id
+    JOIN proveedores ON productos.proveedor_id = proveedores.id
+    WHERE productos.id = ?
   `
 
   try {
@@ -80,6 +80,16 @@ export const createProduct = async (
   const supplier = body.proveedor_nombre
 
   try {
+    // 1. Verificar si el producto ya existe
+    const [existingProduct] = await conn.query<RowDataPacket[]>(
+      'SELECT id FROM productos WHERE nombre = ?',
+      [body.nombre]
+    )
+
+    if (existingProduct.length > 0) {
+      return res.status(409).json({ error: 'El producto ya existe' })
+    }
+
     const [rows] = await conn.query<RowDataPacket[]>(
       'SELECT * FROM categorias WHERE nombre = ?',
       [category]
@@ -106,32 +116,16 @@ export const createProduct = async (
       stock: body.stock,
       fecha_adquisicion: body.fecha_adquisicion,
       fecha_vencimiento: body.fecha_vencimiento,
-      categoria_id: rows[0].categoria_id,
-      proveedor_id: rows2[0].proveedor_id
+      categoria_id: rows[0].id,
+      proveedor_id: rows2[0].id
     }
-  } catch (error) {
-    return res.status(500).json({ error })
-  }
 
-  const dateAd: string = new Date(product.fecha_adquisicion).toISOString()
-
-  product.fecha_adquisicion = new Date(product.fecha_adquisicion)
-    ? parse(dateAd)
-    : new Date()
-
-  const dateVe: string = new Date(product.fecha_vencimiento).toISOString()
-
-  product.fecha_vencimiento = new Date(product.fecha_vencimiento)
-    ? parse(dateVe)
-    : new Date()
-
-  const query = 'INSERT INTO productos SET ?'
-
-  try {
+    const query = 'INSERT INTO productos SET ?'
     await conn.query<RowDataPacket[]>(query, product)
 
     return res.sendStatus(201)
   } catch (error) {
+    console.error(error)
     return res.status(500).json({ error })
   }
 }
@@ -174,8 +168,8 @@ export const updateProduct = async (
       stock: body.stock,
       fecha_adquisicion: body.fecha_adquisicion,
       fecha_vencimiento: body.fecha_vencimiento,
-      categoria_id: rows[0].categoria_id,
-      proveedor_id: rows2[0].proveedor_id
+      categoria_id: rows[0].id,
+      proveedor_id: rows2[0].id
     }
   } catch (error) {
     return res.status(500).json({ error })
@@ -193,7 +187,7 @@ export const updateProduct = async (
   // Construir la consulta SQL dinámicamente
   const query = `UPDATE productos SET ${fields
     .map(([key]) => `${key} = ?`)
-    .join(', ')} WHERE producto_id = ?`
+    .join(', ')} WHERE id = ?`
   const values = fields.map(([_, value]) => value)
 
   try {
@@ -215,7 +209,7 @@ export const deleteProduct = async (
   res: Response
 ): Promise<Response> => {
   const { id } = req.params
-  const query = 'DELETE FROM productos WHERE producto_id = ?'
+  const query = 'DELETE FROM productos WHERE id = ?'
 
   try {
     const [row] = await conn.query<ResultSetHeader>(query, [id])

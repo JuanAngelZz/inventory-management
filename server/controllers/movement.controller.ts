@@ -2,7 +2,6 @@ import { Request, Response } from 'express'
 import conn from '../db'
 import { RowDataPacket } from 'mysql2'
 import { format } from '@formkit/tempo'
-import { Movement } from '../interfaces/models.interface'
 
 export const getMovements = async (
   req: Request,
@@ -11,8 +10,8 @@ export const getMovements = async (
   const query = `
     SELECT movimientos.*, productos.nombre AS producto_nombre 
     FROM movimientos
-    JOIN productos ON movimientos.producto_id = productos.producto_id
-    ORDER BY movimientos.movimiento_id DESC
+    JOIN productos ON movimientos.producto_id = productos.id
+    ORDER BY movimientos.id DESC
   `
 
   try {
@@ -44,7 +43,7 @@ export const getMovement = async (
   res: Response
 ): Promise<Response> => {
   const { id } = req.params
-  const query = 'SELECT * FROM movimientos WHERE movimiento_id = ?'
+  const query = 'SELECT * FROM movimientos WHERE id = ?'
 
   try {
     const [row] = await conn.query<RowDataPacket[]>(query, [id])
@@ -65,65 +64,65 @@ export const createMovement = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const { body } = req;
-  let movement: Movement = {} as Movement;
+  const { body } = req
+  const { producto_nombre, tipo, cantidad, fecha } = body
 
-  const product = body.producto_nombre;
-
-  try {
-    // Obtener el producto por su nombre
-    const [rows] = await conn.query<RowDataPacket[]>(
-      'SELECT * FROM productos WHERE nombre = ?',
-      [product]
-    );
-
-    if (rows.length === 0) {
-      return res.status(404).json({ error: 'Product not found' });
-    }
-
-    const productData = rows[0];
-
-    // Validar si la cantidad de salida es mayor que el stock disponible
-    if (body.tipo === 'salida' && body.cantidad > productData.stock) {
-      return res.status(400).json({ error: 'No hay suficiente stock disponible' });
-    }
-
-    movement = {
-      tipo: body.tipo,
-      cantidad: body.cantidad,
-      fecha:
-        format(body.fecha, 'YYYY-MM-DD HH:mm') || new Date().toDateString(),
-      producto_id: productData.producto_id,
-    };
-  } catch (error) {
-    return res.status(500).json({ error });
-  }
-
-  const query = 'INSERT INTO movimientos SET ?';
+  // 1. Obtener una conexión del pool
+  const connection = await conn.getConnection()
 
   try {
-    await conn.query<RowDataPacket[]>(query, movement);
+    // 2. Iniciar la transacción
+    await connection.beginTransaction()
 
-    if (movement.tipo === 'salida') {
-      const queryStock =
-        'UPDATE productos SET stock = stock - ? WHERE producto_id = ?';
-      await conn.query<RowDataPacket[]>(queryStock, [
-        movement.cantidad,
-        movement.producto_id,
-      ]);
+    // 3. Obtener el ID y stock del producto
+    const [productRows] = await connection.query<RowDataPacket[]>(
+      'SELECT id, stock FROM productos WHERE nombre = ? FOR UPDATE',
+      [producto_nombre]
+    )
+
+    if (productRows.length === 0) {
+      await connection.rollback() // Revertir si el producto no existe
+      return res.status(404).json({ error: 'Product not found' })
     }
 
-    if (movement.tipo === 'entrada') {
-      const queryStock =
-        'UPDATE productos SET stock = stock + ? WHERE producto_id = ?';
-      await conn.query<RowDataPacket[]>(queryStock, [
-        movement.cantidad,
-        movement.producto_id,
-      ]);
+    const productData = productRows[0]
+    const { id: producto_id, stock } = productData
+
+    // 4. Validar stock para salidas
+    if (tipo === 'salida' && cantidad > stock) {
+      await connection.rollback() // Revertir si no hay stock
+      return res
+        .status(400)
+        .json({ error: 'No hay suficiente stock disponible' })
     }
 
-    return res.sendStatus(201);
+    // 5. Insertar el movimiento
+    const movement = {
+      tipo,
+      cantidad,
+      fecha: format(fecha, 'YYYY-MM-DD HH:mm') || new Date(),
+      producto_id
+    }
+    await connection.query('INSERT INTO movimientos SET ?', movement)
+
+    // 6. Actualizar el stock del producto
+    const newStock = tipo === 'salida' ? stock - cantidad : stock + cantidad
+    await connection.query('UPDATE productos SET stock = ? WHERE id = ?', [
+      newStock,
+      producto_id
+    ])
+
+    // 7. Confirmar la transacción
+    await connection.commit()
+
+    return res.sendStatus(201)
   } catch (error) {
-    return res.status(500).json({ error });
+    // 8. Si algo falla, revertir todo
+    await connection.rollback()
+    console.error(error)
+    return res.status(500).json({ error: 'Internal server error' })
+  } finally {
+    // 9. Liberar la conexión para que otros la usen
+    connection.release()
   }
-};
+}
