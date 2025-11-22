@@ -12,6 +12,8 @@ import backupRouter from './routes/backup.routes'
 import chatRouter from './routes/chat.routes'
 import migrateRouter from './routes/migrate.routes'
 import seedRouter from './routes/seed.routes'
+import statsRouter from './routes/stats.routes'
+import reportRouter from './routes/report.routes'
 
 const app = express()
 
@@ -36,5 +38,7 @@ app.use('/api', backupRouter)
 app.use('/api', chatRouter)
 app.use('/api', migrateRouter)
 app.use('/api', seedRouter)
+app.use('/api', statsRouter)
+app.use('/api', reportRouter)
 
 export default app

@@ -18,8 +18,10 @@ export const useLogin = () => {
   })
 
   const onSubmit = async (values: z.infer<typeof loginSchema>) => {
-    await loginUser(values)
-    navigate('/')
+    const success = await loginUser(values)
+    if (success) {
+      navigate('/')
+    }
   }
 
   return { form, errors, onSubmit }

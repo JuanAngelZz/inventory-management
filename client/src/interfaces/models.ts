@@ -39,6 +39,7 @@ export interface Movement {
 }
 
 export interface Category {
+  id?: number
   categoria_id?: number
   nombre: string
 }

@@ -20,14 +20,15 @@ import { useAuth } from '@/contexts/authContext'
 
 const CategoryItem = ({ category }: { category: Category }) => {
   const [open, setOpen] = useState(false)
-  const toast = useToast()
+  const { toast } = useToast()
   const { user } = useAuth()
 
   const deleteCategory = useCategoryStore((state) => state.deleteCategory)
 
   const onDeleteItem = async () => {
+    if (!category.id) return
     try {
-      const id = category.categoria_id
+      const id = category.id
       await deleteCategory(id)
       toast({
         variant: 'destructive',
@@ -66,10 +67,12 @@ const CategoryItem = ({ category }: { category: Category }) => {
                     onKeyDown={(e) => e.stopPropagation()}
                     className='sm:max-w-[425px]'
                   >
-                    <UpdateCategoryForm
-                      id={category.categoria_id}
-                      onClose={onClose}
-                    />
+                    {category.id && (
+                      <UpdateCategoryForm
+                        id={category.id}
+                        onClose={onClose}
+                      />
+                    )}
                   </DialogContent>
                 </Dialog>
               </DropdownMenuItem>

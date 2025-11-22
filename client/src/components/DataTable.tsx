@@ -30,26 +30,24 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
   data,
-  customButtonLabel,
-  url,
   searchFor,
   searchPlaceholder,
-  rol
+  renderMobileItem
 }: DataTableProps<TData, TValue> & {
-  customButtonLabel?: string
-  url: string
   searchFor: string
   searchPlaceholder: string
-  rol: 'administrador' | 'usuario'
+  renderMobileItem?: (item: TData) => React.ReactNode
 }) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 })
+  const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
     const resizeHandler = () => {
       const screenHeight = window.screen.height
-      console.log(screenHeight)
+      const screenWidth = window.innerWidth
+      setIsMobile(screenWidth < 768)
 
       if (screenHeight <= 768) {
         setPagination({ pageIndex: 0, pageSize: 4 })
@@ -97,60 +95,66 @@ export function DataTable<TData, TValue>({
           table.getColumn(searchFor)?.setFilterValue(value)
         }
         placeholder={searchPlaceholder}
-        customButtonLabel={customButtonLabel}
-        url={url}
-        rol={rol}
       />
-      <div className='rounded-md border'>
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  )
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
+      {isMobile && renderMobileItem ? (
+        <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
+          {table.getRowModel().rows.map((row) => (
+            <div key={row.id}>{renderMobileItem(row.original)}</div>
+          ))}
+        </div>
+      ) : (
+        <div className='rounded-md border shadow-sm bg-card'>
+          <Table>
+            <TableHeader className="bg-muted/50">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id} className="hover:bg-transparent">
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead key={header.id} className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    )
+                  })}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className='h-24 text-center'
-                >
-                  Sin resultados.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && 'selected'}
+                    className="hover:bg-muted/50 transition-colors data-[state=selected]:bg-muted"
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id} className="p-4 align-middle [&:has([role=checkbox])]:pr-0">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className='h-24 text-center'
+                  >
+                    Sin resultados.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      )}
       <div className='flex items-center justify-end space-x-2 py-4'>
         <Button
           variant='outline'

@@ -28,6 +28,7 @@ export const AuthContextProvider = ({
   children
 }: ProviderProps<JSX.Element>) => {
   const [isLogin, setIsLogin] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(true)
   const [token, setToken] = useState<string>('')
   const [user, setUser] = useState<User>({} as User)
   const [errors, setErrors] = useState<ErrorState>({} as ErrorState)
@@ -36,7 +37,18 @@ export const AuthContextProvider = ({
     verifyUser()
   }, [])
 
-  const loginUser = async (user: User) => {
+  // Auto-clear errors after 5 seconds
+  useEffect(() => {
+    if (errors?.error) {
+      const timer = setTimeout(() => {
+        setErrors({} as ErrorState)
+      }, 5000)
+
+      return () => clearTimeout(timer)
+    }
+  }, [errors])
+
+  const loginUser = async (user: User): Promise<boolean> => {
     try {
       const { data } = await login(user)
 
@@ -44,10 +56,12 @@ export const AuthContextProvider = ({
       setToken(data.token)
       setUser(data.user)
       setIsLogin(true)
+      return true
     } catch (error) {
       const axiosError = error as ErrorState
 
       setErrors(axiosError.response?.data as ErrorState)
+      return false
     }
   }
 
@@ -64,6 +78,7 @@ export const AuthContextProvider = ({
         setIsLogin(false)
       }
     }
+    setLoading(false)
   }
 
   const logoutUser = () => {
@@ -75,6 +90,7 @@ export const AuthContextProvider = ({
 
   const value: AuthContextProps = {
     isLogin,
+    loading,
     token,
     user,
     errors,

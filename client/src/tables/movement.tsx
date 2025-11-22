@@ -2,6 +2,7 @@ import { Movement } from '@/interfaces/models'
 import { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 
 export const movementColumns: ColumnDef<Movement>[] = [
   {
@@ -10,7 +11,7 @@ export const movementColumns: ColumnDef<Movement>[] = [
       return (
         <Button
           variant='ghost'
-          className='w-full text-center'
+          className="pl-0 hover:bg-transparent"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Producto
@@ -19,7 +20,7 @@ export const movementColumns: ColumnDef<Movement>[] = [
       )
     },
     cell: ({ row }) => {
-      return <p className='text-center'>{row.getValue('producto_nombre')}</p>
+      return <div className="font-medium">{row.getValue('producto_nombre')}</div>
     }
   },
   {
@@ -28,7 +29,7 @@ export const movementColumns: ColumnDef<Movement>[] = [
       return (
         <Button
           variant='ghost'
-          className='w-full text-center'
+          className="pl-0 hover:bg-transparent"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Tipo
@@ -37,10 +38,11 @@ export const movementColumns: ColumnDef<Movement>[] = [
       )
     },
     cell: ({ row }) => {
-      return row.getValue('tipo') == 'entrada' ? (
-        <p className='text-center text-green-700'>{row.getValue('tipo')}</p>
-      ) : (
-        <p className='text-center text-red-700'>{row.getValue('tipo')}</p>
+      const tipo = row.getValue('tipo') as string
+      return (
+        <Badge variant={tipo === 'entrada' ? 'default' : 'destructive'}>
+          {tipo === 'entrada' ? 'Entrada' : 'Salida'}
+        </Badge>
       )
     }
   },
@@ -50,7 +52,7 @@ export const movementColumns: ColumnDef<Movement>[] = [
       return (
         <Button
           variant='ghost'
-          className='w-full text-center'
+          className="pl-0 hover:bg-transparent"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Cantidad
@@ -59,7 +61,7 @@ export const movementColumns: ColumnDef<Movement>[] = [
       )
     },
     cell: ({ row }) => {
-      return <p className='text-center'>{row.getValue('cantidad')}</p>
+      return <div className="font-medium">{row.getValue('cantidad')}</div>
     }
   },
   {
@@ -68,7 +70,7 @@ export const movementColumns: ColumnDef<Movement>[] = [
       return (
         <Button
           variant='ghost'
-          className='w-full text-center'
+          className="pl-0 hover:bg-transparent"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Fecha
@@ -77,25 +79,7 @@ export const movementColumns: ColumnDef<Movement>[] = [
       )
     },
     cell: ({ row }) => {
-      return <p className='text-center'>{row.getValue('fecha')}</p>
-    }
-  },
-  {
-    accessorKey: 'movimiento_id',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant='ghost'
-          className='w-full text-center'
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          ID
-          <ArrowUpDown className='ml-2 h-4 w-4' />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      return <p className='text-center'>{row.getValue('movimiento_id')}</p>
+      return <div className="text-muted-foreground">{row.getValue('fecha')}</div>
     }
   }
 ]

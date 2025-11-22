@@ -3,11 +3,12 @@ import { User } from './models'
 
 export interface AuthContextProps {
   isLogin: boolean
+  loading: boolean
   token: string
   user: User
   errors: ErrorState
 
-  loginUser: (user: User) => Promise<void>
+  loginUser: (user: User) => Promise<boolean>
   // registerUser: (user: User) => Promise<void>
   verifyUser: () => Promise<void>
   logoutUser: () => void

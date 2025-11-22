@@ -12,46 +12,78 @@ const getRandomNumber = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1)) + min
 }
 
-// Data for seeding
+// Helper function to generate a random date within the last N months
+const getRandomDate = (monthsBack: number) => {
+  const date = new Date()
+  date.setMonth(date.getMonth() - getRandomNumber(0, monthsBack))
+  date.setDate(getRandomNumber(1, 28))
+  return date
+}
+
+// Data for seeding - Venezuelan Context
 const categories = [
-  'Electrónica',
-  'Ropa',
-  'Hogar',
-  'Alimentos',
-  'Juguetes',
-  'Deportes',
-  'Libros',
-  'Salud',
-  'Belleza',
-  'Automotriz'
+  'Víveres',
+  'Charcutería',
+  'Bebidas',
+  'Limpieza',
+  'Chucherías',
+  'Lácteos',
+  'Carnicería',
+  'Cuidado Personal',
+  'Hogar'
 ]
 
 const suppliers = [
-  { name: 'ElectroTech', type: 'J' },
-  { name: 'FashionHub', type: 'J' },
-  { name: 'HomeGoods Inc.', type: 'J' },
-  { name: 'FreshFoods Co.', type: 'J' },
-  { name: 'ToyWorld', type: 'J' },
-  { name: 'SportLine', type: 'V' },
-  { name: 'Bookworm Store', type: 'V' },
-  { name: 'HealthyLife', type: 'V' },
-  { name: 'BeautyZone', type: 'V' },
-  { name: 'AutoParts Deluxe', type: 'J' }
+  { name: 'Alimentos Polar', type: 'J' },
+  { name: 'Plumrose Latinoamericana', type: 'J' },
+  { name: 'Nestlé Venezuela', type: 'J' },
+  { name: 'Coca-Cola FEMSA', type: 'J' },
+  { name: 'Procter & Gamble', type: 'J' },
+  { name: 'Distribuidora Heinz', type: 'J' },
+  { name: 'Pepsi-Cola Venezuela', type: 'J' },
+  { name: 'Corporación Inlaca', type: 'J' },
+  { name: 'Puro Lomo', type: 'J' },
+  { name: 'Farmatodo', type: 'J' }
 ]
 
-const users = ['carlos', 'ana', 'pedro', 'laura', 'sofia']
+const users = ['Juan', 'María', 'Carlos', 'Ana', 'Luis', 'Sofía', 'Pedro', 'Laura', 'José', 'Elena']
 
-const products = [
-  { name: 'Laptop', description: 'Laptop de última generación' },
-  { name: 'Camiseta', description: 'Camiseta de algodón' },
-  { name: 'Sofá', description: 'Sofá de tres plazas' },
-  { name: 'Manzanas', description: 'Manzanas frescas' },
-  { name: 'Muñeca', description: 'Muñeca de trapo' },
-  { name: 'Balón de fútbol', description: 'Balón oficial de la liga' },
-  { name: 'Libro de ciencia ficción', description: 'Bestseller internacional' },
-  { name: 'Vitaminas', description: 'Suplemento vitamínico' },
-  { name: 'Crema facial', description: 'Crema hidratante' },
-  { name: 'Aceite de motor', description: 'Aceite sintético para motor' }
+const productsData = [
+  { name: 'Harina P.A.N.', description: 'Harina de maíz precocida blanca', category: 'Víveres' },
+  { name: 'Arroz Primor', description: 'Arroz blanco de mesa tipo I', category: 'Víveres' },
+  { name: 'Pasta Mary', description: 'Pasta de sémola durum', category: 'Víveres' },
+  { name: 'Margarina Mavesa', description: 'Margarina con sal', category: 'Víveres' },
+  { name: 'Mayonesa Kraft', description: 'Mayonesa real', category: 'Víveres' },
+  { name: 'Salsa de Tomate Heinz', description: 'Ketchup clásico', category: 'Víveres' },
+  { name: 'Diablitos Underwood', description: 'Jamón endiablado', category: 'Víveres' },
+  { name: 'Rikesa', description: 'Queso fundido tipo cheddar', category: 'Víveres' },
+  { name: 'Queso Paisa', description: 'Queso blanco pasteurizado', category: 'Charcutería' },
+  { name: 'Jamón Plumrose', description: 'Jamón cocido superior', category: 'Charcutería' },
+  { name: 'Salchichas Viena', description: 'Salchichas tipo viena', category: 'Charcutería' },
+  { name: 'Malta Polar', description: 'Bebida de malta', category: 'Bebidas' },
+  { name: 'Frescolita', description: 'Refresco sabor a colita', category: 'Bebidas' },
+  { name: 'Chinotto', description: 'Refresco sabor a limón', category: 'Bebidas' },
+  { name: 'Pepsi', description: 'Refresco de cola negra', category: 'Bebidas' },
+  { name: 'Jugo de Naranja', description: 'Jugo natural pasteurizado', category: 'Bebidas' },
+  { name: 'Cerveza Polar Pilsen', description: 'Cerveza tipo pilsen', category: 'Bebidas' },
+  { name: 'Jabón Las Llaves', description: 'Jabón en panela azul', category: 'Limpieza' },
+  { name: 'Detergente Ace', description: 'Detergente en polvo', category: 'Limpieza' },
+  { name: 'Lavaplatos Axion', description: 'Crema lavaplatos', category: 'Limpieza' },
+  { name: 'Cloro Nevex', description: 'Blanqueador desinfectante', category: 'Limpieza' },
+  { name: 'Pepito', description: 'Snack de queso', category: 'Chucherías' },
+  { name: 'Cocosette', description: 'Galleta rellena de coco', category: 'Chucherías' },
+  { name: 'Susy', description: 'Galleta rellena de chocolate', category: 'Chucherías' },
+  { name: 'Toronto', description: 'Bombón de chocolate con avellana', category: 'Chucherías' },
+  { name: 'Samba', description: 'Galleta cubierta de chocolate con fresa', category: 'Chucherías' },
+  { name: 'Oreo', description: 'Galleta tipo sándwich de chocolate', category: 'Chucherías' },
+  { name: 'Leche en Polvo La Campiña', description: 'Leche completa en polvo', category: 'Lácteos' },
+  { name: 'Yogurt Migurt', description: 'Yogurt batido de fresa', category: 'Lácteos' },
+  { name: 'Carne Molida', description: 'Carne de res de primera', category: 'Carnicería' },
+  { name: 'Pollo Entero', description: 'Pollo beneficiado fresco', category: 'Carnicería' },
+  { name: 'Chuleta Ahumada', description: 'Chuleta de cerdo ahumada', category: 'Carnicería' },
+  { name: 'Champú Head & Shoulders', description: 'Control caspa', category: 'Cuidado Personal' },
+  { name: 'Desodorante Mum', description: 'Desodorante en bolita', category: 'Cuidado Personal' },
+  { name: 'Papel Higiénico Rosal', description: 'Papel higiénico doble hoja', category: 'Hogar' }
 ]
 
 export const seed = async (req: Request, res: Response) => {
@@ -84,13 +116,13 @@ export const seed = async (req: Request, res: Response) => {
     }
 
     // Seed categorias
-    const insertedCategoryIds: any[] = []
+    const categoryMap = new Map<string, number>()
     for (const name of categories) {
       const [result]: any = await pool.query(
         'INSERT INTO categorias (nombre) VALUES (?)',
         [name]
       )
-      insertedCategoryIds.push(result.insertId)
+      categoryMap.set(name, result.insertId)
     }
 
     // Seed proveedores
@@ -102,7 +134,7 @@ export const seed = async (req: Request, res: Response) => {
           supplier.name,
           supplier.type,
           getRandomNumber(1000000, 9999999).toString(),
-          'Dirección de prueba',
+          'Zona Industrial, Valencia, Carabobo', // Generic Venezuelan address
           getRandomElement(insertedPhoneCodeIds)
         ]
       )
@@ -124,28 +156,76 @@ export const seed = async (req: Request, res: Response) => {
       )
     }
 
-    // Seed productos
-    for (let i = 0; i < 25; i++) {
-      const product = getRandomElement(products)
-      const price = getRandomNumber(10, 200)
-      const acquisitionDate = new Date()
-      acquisitionDate.setDate(acquisitionDate.getDate() - getRandomNumber(1, 365))
+    // Seed productos and movimientos
+    for (const productData of productsData) {
+      const categoryId = categoryMap.get(productData.category)
+      const supplierId = getRandomElement(insertedSupplierIds)
+      const price = getRandomNumber(2, 50) // Prices in USD equivalent roughly
+      const acquisitionDate = getRandomDate(6) // Acquired within last 6 months
       const expirationDate = new Date()
       expirationDate.setDate(expirationDate.getDate() + getRandomNumber(30, 365))
 
-      await pool.query(
+      // 1. Create Product with initial 0 stock (will update later)
+      const [productResult]: any = await pool.query(
         'INSERT INTO productos (nombre, descripcion, stock, precio_compra, precio_venta, fecha_adquisicion, fecha_vencimiento, categoria_id, proveedor_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
         [
-          `${product.name} ${i + 1}`,
-          product.description,
-          getRandomNumber(10, 100),
+          productData.name,
+          productData.description,
+          0, // Initial stock, will be calculated
           price,
-          price * 1.5,
+          price * 1.3, // 30% margin
           acquisitionDate,
           expirationDate,
-          getRandomElement(insertedCategoryIds),
-          getRandomElement(insertedSupplierIds)
+          categoryId,
+          supplierId
         ]
+      )
+      const productId = productResult.insertId
+
+      // 2. Generate Movements
+      let currentStock = 0
+      const numMovements = getRandomNumber(5, 20)
+      
+      // Ensure at least one initial entry
+      const initialEntryQty = getRandomNumber(50, 200)
+      await pool.query(
+        'INSERT INTO movimientos (tipo, cantidad, fecha, producto_id) VALUES (?, ?, ?, ?)',
+        ['entrada', initialEntryQty, acquisitionDate, productId]
+      )
+      currentStock += initialEntryQty
+
+      // Generate random subsequent movements
+      for (let i = 0; i < numMovements; i++) {
+        const isEntry = Math.random() > 0.7 // 30% chance of restocking, 70% sales
+        const moveDate = getRandomDate(5) // Movements in last 5 months
+        
+        // Ensure date is after acquisition
+        if (moveDate < acquisitionDate) continue
+
+        if (isEntry) {
+          const qty = getRandomNumber(10, 50)
+          await pool.query(
+            'INSERT INTO movimientos (tipo, cantidad, fecha, producto_id) VALUES (?, ?, ?, ?)',
+            ['entrada', qty, moveDate, productId]
+          )
+          currentStock += qty
+        } else {
+          // Sale
+          const qty = getRandomNumber(1, 10)
+          if (currentStock >= qty) {
+             await pool.query(
+              'INSERT INTO movimientos (tipo, cantidad, fecha, producto_id) VALUES (?, ?, ?, ?)',
+              ['salida', qty, moveDate, productId]
+            )
+            currentStock -= qty
+          }
+        }
+      }
+
+      // 3. Update Product with final stock
+      await pool.query(
+        'UPDATE productos SET stock = ? WHERE id = ?',
+        [currentStock, productId]
       )
     }
 

@@ -8,14 +8,6 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from './ui/card'
 import { useLogin } from '@/hooks/useLogin'
 
 const LoginForm = () => {
@@ -23,51 +15,50 @@ const LoginForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
-        <Card className='w-[350px]'>
-          <CardHeader>
-            <CardTitle>Iniciar Sesión</CardTitle>
-            <CardDescription>
-              Por favor ingrese sus credenciales.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className='grid gap-4'>
-            <FormField
-              control={form.control}
-              name='nombre'
-              render={({ field }) => (
-                <FormItem className='flex flex-col items-start'>
-                  <FormLabel>Usuario</FormLabel>
-                  <FormControl>
-                    <Input placeholder='Usuario' {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name='contrasena'
-              render={({ field }) => (
-                <FormItem className='flex flex-col items-start'>
-                  <FormLabel>Contraseña</FormLabel>
-                  <FormControl>
-                    <Input
-                      type='password'
-                      placeholder='Contraseña'
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <p className='text-red-500 text-center'>{errors?.error}</p>
-          </CardContent>
-          <CardFooter className='flex justify-end'>
-            <Button type='submit'>Submit</Button>
-          </CardFooter>
-        </Card>
+      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
+        <FormField
+          control={form.control}
+          name='nombre'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Usuario</FormLabel>
+              <FormControl>
+                <Input 
+                  placeholder='Ingresa tu usuario' 
+                  className="h-11"
+                  {...field} 
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name='contrasena'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Contraseña</FormLabel>
+              <FormControl>
+                <Input
+                  type='password'
+                  placeholder='Ingresa tu contraseña'
+                  className="h-11"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {errors?.error && (
+          <p className='text-destructive text-sm text-center bg-destructive/10 p-3 rounded-md'>
+            {errors.error}
+          </p>
+        )}
+        <Button type='submit' className='w-full h-11 text-base'>
+          Iniciar Sesión
+        </Button>
       </form>
     </Form>
   )

@@ -1,144 +1,241 @@
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Download, Slash } from "lucide-react";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { Link } from "react-router-dom";
+import { useState } from 'react'
+import { Card, CardHeader, CardContent, CardTitle, CardDescription } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Download, Calendar as CalendarIcon, FileText } from "lucide-react"
+import Header from '@/components/Header'
+import { useQuery } from '@tanstack/react-query'
+import { getReportData } from '@/api/report'
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
+import * as XLSX from 'xlsx'
+import { format } from "date-fns"
+import { es } from "date-fns/locale"
+import { cn } from "@/lib/utils"
+import { Calendar } from "@/components/ui/calendar"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 
 export default function Report() {
+  const [filters, setFilters] = useState({
+    startDate: undefined as Date | undefined,
+    endDate: undefined as Date | undefined,
+    type: 'all'
+  })
+
+  const { data: movements, isLoading } = useQuery({
+    queryKey: ['reportData', { 
+      ...filters, 
+      startDate: filters.startDate?.toISOString(), 
+      endDate: filters.endDate?.toISOString() 
+    }],
+    queryFn: () => getReportData({
+      startDate: filters.startDate?.toISOString().split('T')[0],
+      endDate: filters.endDate?.toISOString().split('T')[0],
+      type: filters.type
+    })
+  })
+
+  const handleFilterChange = (key: string, value: any) => {
+    setFilters(prev => ({ ...prev, [key]: value }))
+  }
+
+  const exportPDF = () => {
+    const doc = new jsPDF()
+    doc.text("Reporte de Movimientos", 14, 10)
+    
+    const tableData = movements?.map((m: any) => [
+      new Date(m.fecha).toLocaleDateString('es-VE'),
+      m.producto,
+      m.tipo,
+      m.cantidad,
+      `$${m.total_valor}`
+    ]) || []
+
+    autoTable(doc, {
+      head: [['Fecha', 'Producto', 'Tipo', 'Cantidad', 'Total']],
+      body: tableData,
+      startY: 20
+    })
+
+    doc.save('reporte_inventario.pdf')
+  }
+
+  const exportExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(movements || [])
+    const workbook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Reporte")
+    XLSX.writeFile(workbook, "reporte_inventario.xlsx")
+  }
+
   return (
-    <>
-    <header className='mb-4'>
-        <section>
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link to='/'>Inicio</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator>
-                <Slash />
-              </BreadcrumbSeparator>
-              <BreadcrumbLink asChild>
-                <Link to='/administrate'>Administrar</Link>
-              </BreadcrumbLink>
-              <BreadcrumbSeparator>
-                <Slash />
-              </BreadcrumbSeparator>
-              <BreadcrumbItem>
-                <BreadcrumbPage>Reportes</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-        </section>
-      </header>
-    <div className="bg-gray-50 p-8 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-900">📊 Reporte de Inventario</h1>
-        <div className="flex gap-4">
-          <Input type="date" />
-          <Button variant="default">
-            <Download className="mr-2 h-5 w-5" />
-            Descargar PDF
-          </Button>
-        </div>
-      </div>
+    <div className="space-y-6 pb-8">
+      <Header page="Reportes Detallados" />
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {[
-          { title: "Total artículos", value: "1 250" },
-          { title: "Ganancia del mes", value: "$12 300" },
-          { title: "Pérdida por compras", value: "$1 750" },
-        ].map(card => (
-          <Card key={card.title} className="shadow">
-            <CardHeader>
-              <h2 className="text-sm font-medium text-gray-500">{card.title}</h2>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-semibold text-gray-900">{card.value}</p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Filtros de Búsqueda</CardTitle>
+          <CardDescription>Selecciona el rango de fechas y tipo de movimiento</CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col md:flex-row gap-4 items-end">
+          <div className="grid w-full max-w-sm items-center gap-1.5">
+            <label className="text-sm font-medium">Fecha Inicio</label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={"outline"}
+                  className={cn(
+                    "w-full pl-3 text-left font-normal",
+                    !filters.startDate && "text-muted-foreground"
+                  )}
+                >
+                  {filters.startDate ? (
+                    format(filters.startDate, "dd/MM/yyyy")
+                  ) : (
+                    <span>Seleccionar fecha</span>
+                  )}
+                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={filters.startDate}
+                  onSelect={(date) => handleFilterChange('startDate', date)}
+                  disabled={(date) =>
+                    date > new Date() || date < new Date("1900-01-01")
+                  }
+                  initialFocus
+                  locale={es}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+          
+          <div className="grid w-full max-w-sm items-center gap-1.5">
+            <label className="text-sm font-medium">Fecha Fin</label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={"outline"}
+                  className={cn(
+                    "w-full pl-3 text-left font-normal",
+                    !filters.endDate && "text-muted-foreground"
+                  )}
+                >
+                  {filters.endDate ? (
+                    format(filters.endDate, "dd/MM/yyyy")
+                  ) : (
+                    <span>Seleccionar fecha</span>
+                  )}
+                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={filters.endDate}
+                  onSelect={(date) => handleFilterChange('endDate', date)}
+                  disabled={(date) =>
+                    date > new Date() || date < new Date("1900-01-01")
+                  }
+                  initialFocus
+                  locale={es}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
 
-      {/* Tablas lado a lado */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Detalle del Inventario */}
-        <Card className="shadow">
-          <CardHeader>
-            <h2 className="text-lg font-medium text-gray-800">Detalle del Inventario</h2>
-          </CardHeader>
-          <CardContent className="overflow-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-100">
-                <tr>
-                  {["ID", "Nombre", "Stock", "Precio de venta", "Proveedor"].map(h => (
-                    <th
-                      key={h}
-                      className="px-4 py-2 text-left text-sm font-semibold text-gray-700"
-                    >
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {[...Array(5)].map((_, i) => (
-                  <tr key={i}>
-                    <td className="px-4 py-2">{100 + i}</td>
-                    <td className="px-4 py-2">Producto {i + 1}</td>
-                    <td className="px-4 py-2">{Math.floor(Math.random() * 200)}</td>
-                    <td className="px-4 py-2">{Math.floor(Math.random() * 50) + 1}$</td>
-                    <td className="px-4 py-2">Proveedor {i + 1}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </CardContent>
-        </Card>
+          <div className="grid w-full max-w-sm items-center gap-1.5">
+            <label className="text-sm font-medium">Tipo de Movimiento</label>
+            <Select 
+              value={filters.type} 
+              onValueChange={(value) => handleFilterChange('type', value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Todos" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos</SelectItem>
+                <SelectItem value="entrada">Entradas (Compras)</SelectItem>
+                <SelectItem value="salida">Salidas (Ventas)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-        {/* Últimos Movimientos */}
-        <Card className="shadow">
-          <CardHeader>
-            <h2 className="text-lg font-medium text-gray-800">Últimos Movimientos</h2>
-          </CardHeader>
-          <CardContent className="overflow-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-100">
-                <tr>
-                  {["Fecha", "Tipo", "Producto", "Cantidad", "Usuario"].map(h => (
-                    <th
-                      key={h}
-                      className="px-4 py-2 text-left text-sm font-semibold text-gray-700"
-                    >
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {[...Array(5)].map((_, i) => (
-                  <tr key={i}>
-                    <td className="px-4 py-2">
-                      2025-06-{10 + i}
-                    </td>
-                    <td className="px-4 py-2">
-                      {i % 2 === 0 ? "Venta" : "Compra"}
-                    </td>
-                    <td className="px-4 py-2">Producto {i + 1}</td>
-                    <td className="px-4 py-2">{Math.floor(Math.random() * 50) + 1}</td>
-                    <td className="px-4 py-2">User{ i + 1 }</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </CardContent>
-        </Card>
-      </div>
+          <div className="flex gap-2 ml-auto">
+            <Button variant="outline" onClick={exportPDF} disabled={!movements?.length}>
+              <FileText className="mr-2 h-4 w-4" />
+              PDF
+            </Button>
+            <Button variant="outline" onClick={exportExcel} disabled={!movements?.length}>
+              <Download className="mr-2 h-4 w-4" />
+              Excel
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Resultados</CardTitle>
+          <CardDescription>
+            {movements?.length || 0} registros encontrados
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Fecha</TableHead>
+                  <TableHead>Producto</TableHead>
+                  <TableHead>Tipo</TableHead>
+                  <TableHead className="text-right">Cantidad</TableHead>
+                  <TableHead className="text-right">Valor Total</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-8">
+                      Cargando datos...
+                    </TableCell>
+                  </TableRow>
+                ) : movements?.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                      No se encontraron movimientos con los filtros seleccionados
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  movements?.map((movement: any) => (
+                    <TableRow key={movement.movimiento_id}>
+                      <TableCell>{new Date(movement.fecha).toLocaleDateString('es-VE')}</TableCell>
+                      <TableCell className="font-medium">{movement.producto}</TableCell>
+                      <TableCell>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          movement.tipo === 'entrada' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        }`}>
+                          {movement.tipo === 'entrada' ? 'Entrada' : 'Salida'}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">{movement.cantidad}</TableCell>
+                      <TableCell className="text-right font-bold">
+                        ${Number(movement.total_valor).toFixed(2)}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
     </div>
-    </>
-  );
+  )
 }

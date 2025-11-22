@@ -4,6 +4,9 @@ import { supplierColumns } from '@/tables/supplier'
 import { useEffect } from 'react'
 import useSupplierStore from '@/stores/supplierStore'
 import { useAuth } from '@/contexts/authContext'
+import { Button } from '@/components/ui/button'
+import { Link } from 'react-router-dom'
+import { Plus } from 'lucide-react'
 
 const Suppliers = () => {
   const suppliers = useSupplierStore((state) => state.suppliers)
@@ -16,15 +19,24 @@ const Suppliers = () => {
 
   return (
     <>
-      <Header page='Proveedores' />
+      <Header 
+        page='Proveedores' 
+        action={
+          user?.rol === 'administrador' && (
+            <Button asChild>
+              <Link to="/suppliers/create">
+                <Plus className="mr-2 h-4 w-4" />
+                Nuevo Proveedor
+              </Link>
+            </Button>
+          )
+        }
+      />
       <DataTable
         columns={supplierColumns}
         data={suppliers}
-        customButtonLabel='Agregar nuevo proveedor'
-        url='/suppliers/create'
         searchFor='nombre'
         searchPlaceholder='Buscar por nombre de proveedor'
-        rol={user?.rol}
       />
     </>
   )

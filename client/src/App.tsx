@@ -41,6 +41,7 @@ function App() {
           <Route path='administrate' element={<Administrate />} />
           <Route path='administrate/users' element={<Users />} />
           <Route path='administrate/users/create' element={<CreateUser />} />
+          <Route path='administrate/users/edit/:id' element={<CreateUser />} />
           <Route path='administrate/backup' element={<Backup />} />
           <Route path='administrate/migrate' element={<Migrate />} />
           <Route path='administrate/report' element={<Report />} />

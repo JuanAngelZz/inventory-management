@@ -1,39 +1,28 @@
 import { Input } from './ui/input'
-import { Button } from './ui/button'
-import { PackagePlus } from 'lucide-react'
-import { MyTableHeadProps } from '@/interfaces/props'
-import { Link, useLocation } from 'react-router-dom'
+import { Search } from 'lucide-react'
+
+interface MyTableHeadProps {
+  filterValue: string
+  onFilterChange: (value: string) => void
+  placeholder?: string
+}
 
 const MyTableHead = ({
   filterValue,
   onFilterChange,
-  placeholder = 'Buscar',
-  customButtonLabel = 'Crear nueva instancia',
-  url,
-  rol
+  placeholder = 'Buscar'
 }: MyTableHeadProps) => {
-  const { pathname } = useLocation()
-
-  const shouldRenderButton =
-    !(pathname === '/suppliers' || pathname === '/products') ||
-    rol !== 'usuario'
-
   return (
-    <div className='w-full flex items-center justify-between py-4'>
-      <Input
-        placeholder={placeholder}
-        value={filterValue}
-        onChange={(event) => onFilterChange(event.target.value)}
-        className='max-w-sm'
-      />
-      {shouldRenderButton && (
-        <Link to={url}>
-          <Button variant={'outline'} className='flex items-center gap-2'>
-            <PackagePlus />
-            {customButtonLabel}
-          </Button>
-        </Link>
-      )}
+    <div className='flex items-center py-4'>
+      <div className="relative flex-1 max-w-sm">
+        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder={placeholder}
+          value={filterValue}
+          onChange={(event) => onFilterChange(event.target.value)}
+          className="pl-8"
+        />
+      </div>
     </div>
   )
 }
