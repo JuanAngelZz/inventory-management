@@ -15,7 +15,7 @@ export const supplierSchema = z.object({
     .string({
       required_error: 'El atributo "telefono" es requerido'
     })
-    .length(7, 'El número deteléfono debe tener 7 dígitos'),
+    .length(7, 'El número de teléfono debe tener 7 dígitos'),
   direccion: z
     .string({
       required_error: 'El atributo "direccion" es requerido'

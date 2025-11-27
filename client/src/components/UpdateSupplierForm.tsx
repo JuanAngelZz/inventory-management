@@ -5,7 +5,7 @@ import { supplierSchema } from '@/schemas/supplierForm'
 import useCarrierCodeStore from '@/stores/carrierCodeStore'
 import useSupplierStore from '@/stores/supplierStore'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Form, FormControl, FormField, FormLabel, FormMessage } from './ui/form'
@@ -46,16 +46,13 @@ const UpdateSupplierForm = ({ id, onClose }: UpdateFormProps) => {
   const form = useForm<z.infer<typeof supplierSchema>>({
     resolver: zodResolver(supplierSchema),
     defaultValues: {
-      // Inicializa los valores predeterminados con valores vacíos
       nombre: '',
       tipo: '',
       telefono: '',
       direccion: '',
-      codigo_telefono_id: '1'
+      codigo_telefono_id: ''
     }
   })
-
-  const [placeholder, setPlaceholder] = useState('')
 
   // Utiliza useEffect para monitorear cambios en selectedProduct
   useEffect(() => {
@@ -66,18 +63,10 @@ const UpdateSupplierForm = ({ id, onClose }: UpdateFormProps) => {
         tipo: selectedSupplier.tipo,
         telefono: selectedSupplier.telefono,
         direccion: selectedSupplier.direccion,
-        codigo_telefono_id: selectedSupplier.codigo_telefono_id.toString()
+        codigo_telefono_id: selectedSupplier.codigo_telefono_id?.toString()
       })
     }
-
-    const selectedCc = ccs.find(
-      (cc) => cc.codigo_telefono_id === selectedSupplier?.codigo_telefono_id
-    )?.codigo_operadora
-
-    if (selectedCc) {
-      setPlaceholder(selectedCc)
-    }
-  }, [selectedSupplier])
+  }, [selectedSupplier, form])
 
   async function onSubmit(data: z.infer<typeof supplierSchema>) {
     const supplier: Supplier = {
@@ -168,17 +157,17 @@ const UpdateSupplierForm = ({ id, onClose }: UpdateFormProps) => {
               render={({ field }) => (
                 <>
                   <FormControl>
-                    <Select onValueChange={field.onChange}>
+                    <Select onValueChange={field.onChange} value={field.value?.toString()}>
                       <SelectTrigger>
-                        <SelectValue placeholder={placeholder} />
+                        <SelectValue placeholder="Seleccione..." />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
                           <SelectLabel>Operadoras</SelectLabel>
-                          {ccs.map((cc) => (
+                          {ccs.filter(cc => cc.id != null).map((cc) => (
                             <SelectItem
-                              key={cc.codigo_telefono_id}
-                              value={cc.codigo_telefono_id?.toString()}
+                              key={cc.id}
+                              value={String(cc.id)}
                             >
                               {cc.codigo_operadora}
                             </SelectItem>

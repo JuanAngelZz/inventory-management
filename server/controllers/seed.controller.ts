@@ -86,17 +86,40 @@ const productsData = [
   { name: 'Papel Higiénico Rosal', description: 'Papel higiénico doble hoja', category: 'Hogar' }
 ]
 
+import fs from 'fs'
+import path from 'path'
+
+// ... imports
+
 export const seed = async (req: Request, res: Response) => {
   try {
-    // Clear existing data
-    await pool.query('SET FOREIGN_KEY_CHECKS=0')
-    await pool.query('TRUNCATE TABLE movimientos')
-    await pool.query('TRUNCATE TABLE productos')
-    await pool.query('TRUNCATE TABLE proveedores')
-    await pool.query('TRUNCATE TABLE usuarios')
-    await pool.query('TRUNCATE TABLE categorias')
-    await pool.query('TRUNCATE TABLE codigos_telefono')
-    await pool.query('SET FOREIGN_KEY_CHECKS=1')
+    const [tables] = (await pool.query('SHOW TABLES')) as any[]
+
+    if (tables.length === 0) {
+      // Create tables if they don't exist
+      const sql = fs.readFileSync(path.join(__dirname, '../../create_tables.sql'), 'utf-8')
+      const queries = sql.split(';').filter(query => query.trim() !== '')
+
+      for (const query of queries) {
+        if (query.trim()) {
+          await pool.query(query)
+        }
+      }
+    } else {
+      // Clear existing data
+      await pool.query('SET FOREIGN_KEY_CHECKS=0')
+      const tableNames = ['movimientos', 'productos', 'proveedores', 'usuarios', 'categorias', 'codigos_telefono']
+      for (const table of tableNames) {
+        try {
+           await pool.query(`TRUNCATE TABLE ${table}`)
+        } catch (error) {
+           console.warn(`Could not truncate table ${table}, it might not exist.`)
+        }
+      }
+      await pool.query('SET FOREIGN_KEY_CHECKS=1')
+    }
+
+    // ... rest of the seeding logic
 
     // Seed codigos_telefono
     const phoneCodes = [
@@ -144,7 +167,7 @@ export const seed = async (req: Request, res: Response) => {
     // Seed usuarios
     const adminPassword = await bcrypt.hash('admin123', 10)
     await pool.query(
-      'INSERT INTO usuarios (nombre, contrasena, rol) VALUES (?, ?, ?)',
+      'INSERT INTO usuarios (nombre, contrasena, rol) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE contrasena = VALUES(contrasena)',
       ['admin', adminPassword, 'administrador']
     )
 

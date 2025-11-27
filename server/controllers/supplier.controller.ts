@@ -29,7 +29,7 @@ export const getSupplier = async (
   res: Response
 ): Promise<Response> => {
   const { id } = req.params
-  const query = 'SELECT * FROM proveedores WHERE proveedor_id = ?'
+  const query = 'SELECT * FROM proveedores WHERE id = ?'
 
   try {
     const [row] = await conn.query<RowDataPacket[]>(query, [id])
@@ -66,7 +66,7 @@ export const updateSupplier = async (
 ): Promise<Response> => {
   const { id } = req.params
   const supplier: Supplier = req.body
-  const query = 'UPDATE proveedores SET ? WHERE proveedor_id = ?'
+  const query = 'UPDATE proveedores SET ? WHERE id = ?'
 
   try {
     const [row] = await conn.query<ResultSetHeader>(query, [supplier, id])
@@ -86,7 +86,7 @@ export const deleteSupplier = async (
   res: Response
 ): Promise<Response> => {
   const { id } = req.params
-  const query = 'DELETE FROM proveedores WHERE proveedor_id = ?'
+  const query = 'DELETE FROM proveedores WHERE id = ?'
 
   try {
     const [row] = await conn.query<ResultSetHeader>(query, [id])

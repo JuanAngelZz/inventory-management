@@ -209,10 +209,13 @@ export const deleteProduct = async (
   res: Response
 ): Promise<Response> => {
   const { id } = req.params
-  const query = 'DELETE FROM productos WHERE id = ?'
-
+  
   try {
-    const [row] = await conn.query<ResultSetHeader>(query, [id])
+    // First delete related movements
+    await conn.query('DELETE FROM movimientos WHERE producto_id = ?', [id])
+
+    // Then delete the product
+    const [row] = await conn.query<ResultSetHeader>('DELETE FROM productos WHERE id = ?', [id])
 
     if (row.affectedRows === 0) {
       return res.status(404).json({ error: 'Product not found' })
@@ -220,6 +223,7 @@ export const deleteProduct = async (
 
     return res.sendStatus(204)
   } catch (error) {
+    console.error(error)
     return res.status(500).json({ error })
   }
 }

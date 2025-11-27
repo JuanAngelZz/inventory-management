@@ -1,4 +1,5 @@
 import { Movement } from '@/interfaces/models'
+import { format } from '@formkit/tempo'
 import { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -79,7 +80,7 @@ export const movementColumns: ColumnDef<Movement>[] = [
       )
     },
     cell: ({ row }) => {
-      return <div className="text-muted-foreground">{row.getValue('fecha')}</div>
+      return <div className="text-muted-foreground">{format(row.getValue('fecha'), { date: 'medium', time: 'short' }, 'es')}</div>
     }
   }
 ]

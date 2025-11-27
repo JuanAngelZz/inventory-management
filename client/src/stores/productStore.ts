@@ -55,9 +55,14 @@ const useProductStore = create<ProductStore>((set, get) => ({
   deleteProduct: async (id) => {
     try {
       await deleteProduct(id)
-      get().getProducts()
+      set((state) => ({
+        products: state.products.filter(
+          (product) => (product.producto_id || product.id) !== id
+        )
+      }))
     } catch (error) {
       console.log(error)
+      throw error
     }
   }
 }))

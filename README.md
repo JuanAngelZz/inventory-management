@@ -1,86 +1,73 @@
 # Sistema de Inventario Fullstack
 
-Proyecto fullstack con **React (Vite)** + **Express/TypeScript** y **MySQL**. Este README te guía para levantar y correr la app fácilmente.
+Proyecto fullstack con **React (Vite)**, **Express/TypeScript** y **MySQL**, ahora completamente containerizado con **Docker**.
 
 ## 🚀 Requisitos
 
-- Node.js v16+
-- Docker + Docker Compose
+- Docker Desktop (incluye Docker Compose)
 - Git
 
-## ⚙️ Instalación rápida
+## ⚙️ Instalación y Ejecución
 
-### 1. Clonar y configurar entornos
+### 1. Clonar el repositorio
 
 ```bash
 git clone https://github.com/JuanAngelZz/inventory-management
 cd inventory-management
-cp server/.env.example server/.env
-cp client/.env.example client/.env
 ```
 
-### 2. Levantar base de datos
+### 2. Configurar variables de entorno
+
+Crea un archivo `.env` en la raíz del proyecto basado en el ejemplo:
 
 ```bash
-docker compose up -d
-# Crea las tablas + usuario admin
-docker exec -i mysql-ims mysql -uroot -pclave123 ims_upt < create_tables.sql
+cp .env.example .env
 ```
 
-### 3. Iniciar el backend
+Asegúrate de configurar tu `GOOGLE_GEN_AI_KEY` en el archivo `.env` para que funcione el asistente de IA.
 
-En la carpeta raíz del proyecto:
+### 3. Levantar la aplicación con Docker
+
+Ejecuta el siguiente comando para construir y levantar todos los servicios (Frontend, Backend y Base de Datos):
 
 ```bash
-npm install
-npm run dev
+docker-compose up -d --build
 ```
 
-### 4. Iniciar el frontend
+Esto iniciará:
+- **Frontend:** [http://localhost:5173](http://localhost:5173)
+- **Backend:** [http://localhost:4000](http://localhost:4000)
+- **Base de Datos (MySQL):** Puerto 3307
 
-```bash
-cd client
-npm install
-npm run dev
-```
+### 4. Inicializar la Base de Datos
 
-## 🔑 Variables de Entorno
+Una vez que los contenedores estén corriendo, puedes inicializar la base de datos visitando los siguientes endpoints en tu navegador o usando curl:
 
-### server/.env
-
-```env
-PORT=5000
-SECRET=tu_clave
-DB_HOST=localhost
-DB_PORT=3307
-DB_USER=root
-DB_PASSWORD=clave123
-DB_NAME=ims_upt
-```
-
-### client/.env
-
-```env
-VITE_API_URL=http://localhost:5000/api
-```
+1. **Crear tablas:** [http://localhost:4000/api/migrate](http://localhost:4000/api/migrate)
+2. **Poblar datos (Opcional):** [http://localhost:4000/api/seed](http://localhost:4000/api/seed)
 
 ## 👤 Usuario de prueba
 
 - **Usuario:** admin
 - **Contraseña:** admin123
 
-## 🛠 Scripts útiles
-
-### Backend
+## 🛠 Comandos útiles
 
 ```bash
-npm run dev     # desarrollo
-npm run build   # producción
+# Ver logs de los contenedores
+docker-compose logs -f
+
+# Detener los contenedores
+docker-compose down
+
+# Reiniciar un servicio específico (ej. server)
+docker-compose restart server
 ```
 
-### Frontend
+## 📁 Estructura del Proyecto
 
-```bash
-npm run dev     # desarrollo
-npm run build   # producción
-```
+- `/client`: Frontend (React + Vite)
+- `/server`: Backend (Express + TypeScript)
+- `docker-compose.yml`: Orquestación de contenedores
+- `Dockerfile.server`: Configuración Docker del Backend
+- `client/Dockerfile`: Configuración Docker del Frontend (Nginx)

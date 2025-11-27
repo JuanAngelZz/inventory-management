@@ -1,11 +1,5 @@
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator
-} from '@/components/ui/breadcrumb'
+import Header from '@/components/Header'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -20,7 +14,6 @@ import { Category } from '@/interfaces/models'
 import { categorySchema } from '@/schemas/categorySchema'
 import useCategoryStore from '@/stores/categoryStore'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Slash } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import { z } from 'zod'
@@ -59,35 +52,16 @@ const CreateCategory = () => {
 
   return (
     <>
-      <header className='mb-4'>
-        <h1 className='scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl mb-6'>
-          Crear una nueva categoría
-        </h1>
-        <section>
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link to='/'>Inicio</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator>
-                <Slash />
-              </BreadcrumbSeparator>
-              <BreadcrumbLink asChild>
-                <Link to='/categories'>Categorías</Link>
-              </BreadcrumbLink>
-              <BreadcrumbSeparator>
-                <Slash />
-              </BreadcrumbSeparator>
-              <BreadcrumbItem>
-                <BreadcrumbPage>Crear</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-        </section>
-      </header>
+      <Header 
+        page="Crear Nueva Categoría" 
+        breadcrumbs={[
+          { label: 'Categorías', href: '/categories' },
+          { label: 'Crear' }
+        ]}
+      />
       <main>
+        <Card>
+          <CardContent className="pt-6">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -117,6 +91,8 @@ const CreateCategory = () => {
             </div>
           </form>
         </Form>
+        </CardContent>
+        </Card>
       </main>
     </>
   )

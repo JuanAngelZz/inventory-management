@@ -9,6 +9,7 @@ import {
   SortingState,
   useReactTable
 } from '@tanstack/react-table'
+import { ChevronsLeft, ChevronsRight } from 'lucide-react'
 
 import {
   Table,
@@ -32,13 +33,15 @@ export function DataTable<TData, TValue>({
   data,
   searchFor,
   searchPlaceholder,
-  renderMobileItem
+  renderMobileItem,
+  defaultSorting
 }: DataTableProps<TData, TValue> & {
   searchFor: string
   searchPlaceholder: string
   renderMobileItem?: (item: TData) => React.ReactNode
+  defaultSorting?: SortingState
 }) {
-  const [sorting, setSorting] = useState<SortingState>([])
+  const [sorting, setSorting] = useState<SortingState>(defaultSorting || [])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 })
   const [isMobile, setIsMobile] = useState(false)
@@ -159,10 +162,18 @@ export function DataTable<TData, TValue>({
         <Button
           variant='outline'
           size='sm'
+          onClick={() => table.setPageIndex(0)}
+          disabled={!table.getCanPreviousPage()}
+        >
+          <ChevronsLeft className="h-4 w-4" />
+        </Button>
+        <Button
+          variant='outline'
+          size='sm'
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
-          Previous
+          Anterior
         </Button>
         <Button
           variant='outline'
@@ -170,7 +181,15 @@ export function DataTable<TData, TValue>({
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
-          Next
+          Siguiente
+        </Button>
+        <Button
+          variant='outline'
+          size='sm'
+          onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+          disabled={!table.getCanNextPage()}
+        >
+          <ChevronsRight className="h-4 w-4" />
         </Button>
       </div>
     </>

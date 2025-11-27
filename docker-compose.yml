@@ -1,5 +1,37 @@
+version: '3.8'
 
 services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    container_name: server-ims
+    restart: always
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - DB_HOST=mysql
+      - DB_USER=root
+      - DB_PASSWORD=clave123
+      - DB_DATABASE=ims_upt
+      - DB_PORT=3306
+      - SECRET=${SECRET}
+      - GOOGLE_GEN_AI_KEY=${GOOGLE_GEN_AI_KEY}
+    depends_on:
+      - mysql
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: client-ims
+    restart: always
+    ports:
+      - "5173:80"
+    depends_on:
+      - server
+
   mysql:
     image: mysql:8.0
     container_name: mysql-ims

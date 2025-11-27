@@ -1,12 +1,6 @@
 import { createMovement } from '@/api/movements'
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator
-} from '@/components/ui/breadcrumb'
+import Header from '@/components/Header'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -48,10 +42,11 @@ import useMovementStore from '@/stores/movementStore'
 import useProductStore from '@/stores/productStore'
 import { format } from '@formkit/tempo'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CalendarIcon, Check, ChevronsUpDown, Slash } from 'lucide-react'
+import { CalendarIcon, Check, ChevronsUpDown } from 'lucide-react'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 import { z } from 'zod'
 
 const CreateMovement = () => {
@@ -73,6 +68,8 @@ const CreateMovement = () => {
     }
   })
 
+  const queryClient = useQueryClient()
+
   const onSubmit = async (data: z.infer<typeof movementSchema>) => {
     const movement: Movement = {
       tipo: data.tipo,
@@ -86,6 +83,7 @@ const CreateMovement = () => {
     try {
       await createMovement(movement)
       getMovements()
+      queryClient.invalidateQueries({ queryKey: ['dashboardStats'] })
   
       toast({
         title: 'Movimiento registrado:',
@@ -113,35 +111,16 @@ const CreateMovement = () => {
 
   return (
     <>
-      <header className='mb-4'>
-        <h1 className='scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl mb-6'>
-          Registrar movimiento de inventario
-        </h1>
-        <section>
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link to='/'>Inicio</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator>
-                <Slash />
-              </BreadcrumbSeparator>
-              <BreadcrumbLink asChild>
-                <Link to='/movements'>Movimientos</Link>
-              </BreadcrumbLink>
-              <BreadcrumbSeparator>
-                <Slash />
-              </BreadcrumbSeparator>
-              <BreadcrumbItem>
-                <BreadcrumbPage>Crear</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-        </section>
-      </header>
+      <Header 
+        page="Registrar Movimiento de Inventario" 
+        breadcrumbs={[
+          { label: 'Movimientos', href: '/movements' },
+          { label: 'Registrar' }
+        ]}
+      />
       <main>
+        <Card>
+          <CardContent className="pt-6">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -302,6 +281,8 @@ const CreateMovement = () => {
             </Button>
           </form>
         </Form>
+        </CardContent>
+        </Card>
       </main>
     </>
   )

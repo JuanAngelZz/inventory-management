@@ -1,27 +1,43 @@
 
+
 import { AlertCircle, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
+import useProductStore from "@/stores/productStore";
 
 export function StockAlert() {
-  const [isVisible, setIsVisible] = useState(true);
+  const { products, getProducts } = useProductStore();
+  const [isDismissed, setIsDismissed] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      handleClose();
-    }, 10000); 
+    if (products.length === 0) {
+      getProducts();
+    }
+  }, [getProducts, products.length]);
 
-    return () => clearTimeout(timer);
-  }, []);
+  const lowStockCount = products.filter(p => p.stock <= 10).length;
+  const shouldShow = lowStockCount > 0 && !isDismissed;
+
+  useEffect(() => {
+    if (shouldShow) {
+      const timer = setTimeout(() => {
+        handleClose();
+      }, 10000);
+      return () => clearTimeout(timer);
+    }
+  }, [shouldShow]);
 
   const handleClose = () => {
     setIsClosing(true);
-    setTimeout(() => setIsVisible(false), 300);
+    setTimeout(() => {
+      setIsDismissed(true);
+      setIsClosing(false);
+    }, 300);
   };
 
-  if (!isVisible) return null;
+  if (!shouldShow && !isClosing) return null;
 
   return (
     <div className={cn(
@@ -37,7 +53,7 @@ export function StockAlert() {
             ¡Atención! Stock Crítico
           </h3>
           <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-            Se ha detectado inventario bajo en algunos productos. Revisa el panel de control para más detalles.
+            Se ha detectado inventario bajo en {lowStockCount} producto{lowStockCount !== 1 ? 's' : ''}. Revisa el panel de control para más detalles.
           </p>
         </div>
         <Button 

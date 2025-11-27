@@ -3,6 +3,7 @@ import conn from '../db'
 import { RowDataPacket } from 'mysql2'
 import { format } from '@formkit/tempo'
 
+
 export const getMovements = async (
   req: Request,
   res: Response
@@ -19,15 +20,7 @@ export const getMovements = async (
 
     const movements = rows.map((movement) => {
       return {
-        ...movement,
-        fecha: format(
-          new Date(movement.fecha),
-          {
-            date: 'medium',
-            time: 'short'
-          },
-          'es'
-        )
+        ...movement
       }
     })
 

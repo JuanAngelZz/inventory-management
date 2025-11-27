@@ -96,7 +96,7 @@ export const getDashboardStats = async (req: Request, res: Response) => {
         p.nombre as producto
       FROM movimientos m
       JOIN productos p ON m.producto_id = p.id
-      ORDER BY m.fecha DESC
+      ORDER BY m.id DESC
       LIMIT 5
     `)
 

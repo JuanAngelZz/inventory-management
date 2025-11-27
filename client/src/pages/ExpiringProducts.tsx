@@ -166,7 +166,13 @@ export default function ExpiringProducts() {
 
   return (
     <>
-      <Header page="Productos Próximos a Vencer" />
+      <Header 
+        page="Productos Próximos a Vencer" 
+        breadcrumbs={[
+          { label: 'Productos', href: '/products' },
+          { label: 'Próximos a Vencer' }
+        ]}
+      />
       
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-3 mb-6">

@@ -33,7 +33,7 @@ const SupplierActions = ({ supplier }: SupplierActionsProps) => {
 
   const onDeleteItem = async () => {
     try {
-      await deleteSupplier(supplier.proveedor_id)
+      await deleteSupplier(supplier.id!)
       toast({
         variant: 'destructive',
         title: 'Proveedor eliminado exitosamente'
@@ -68,7 +68,7 @@ const SupplierActions = ({ supplier }: SupplierActionsProps) => {
               className='sm:max-w-[425px]'
             >
               <UpdateSupplierForm
-                id={supplier.proveedor_id}
+                id={supplier.id!}
                 onClose={onClose}
               />
             </DialogContent>

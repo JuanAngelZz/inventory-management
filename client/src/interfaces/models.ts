@@ -6,6 +6,7 @@ export type User = {
 }
 
 export interface Product {
+  id?: number
   producto_id?: number
   nombre: string
   descripcion: string
@@ -21,7 +22,7 @@ export interface Product {
 }
 
 export interface Supplier {
-  proveedor_id?: number
+  id?: number
   nombre: string
   tipo: string
   telefono: string
@@ -45,7 +46,7 @@ export interface Category {
 }
 
 export interface CarrierCode {
-  codigo_telefono_id?: number
+  id: number
   operadora: string
   codigo_operadora: string
 }

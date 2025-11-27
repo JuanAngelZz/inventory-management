@@ -1,11 +1,5 @@
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator
-} from '@/components/ui/breadcrumb'
+import Header from '@/components/Header'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -32,7 +26,6 @@ import { supplierSchema } from '@/schemas/supplierForm'
 import useCarrierCodeStore from '@/stores/carrierCodeStore'
 import useSupplierStore from '@/stores/supplierStore'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Slash } from 'lucide-react'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
@@ -48,7 +41,6 @@ const CreateSupplier = () => {
 
   useEffect(() => {
     getCcs()
-    console.log(ccs)
   }, [])
 
   const form = useForm<z.infer<typeof supplierSchema>>({
@@ -58,9 +50,16 @@ const CreateSupplier = () => {
       tipo: '',
       telefono: '',
       direccion: '',
-      codigo_telefono_id: '1'
+      codigo_telefono_id: ''
     }
   })
+
+  useEffect(() => {
+    const currentVal = form.getValues().codigo_telefono_id
+    if (ccs.length > 0 && !currentVal) {
+      form.setValue('codigo_telefono_id', String(ccs[0].id))
+    }
+  }, [ccs, form])
 
   const onSubmit = async (data: z.infer<typeof supplierSchema>) => {
     const supplier: Supplier = {
@@ -89,35 +88,16 @@ const CreateSupplier = () => {
 
   return (
     <>
-      <header className='mb-4'>
-        <h1 className='scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl mb-6'>
-          Agregar un nuevo proveedor
-        </h1>
-        <section>
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link to='/'>Inicio</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator>
-                <Slash />
-              </BreadcrumbSeparator>
-              <BreadcrumbLink asChild>
-                <Link to='/suppliers'>Proveedores</Link>
-              </BreadcrumbLink>
-              <BreadcrumbSeparator>
-                <Slash />
-              </BreadcrumbSeparator>
-              <BreadcrumbItem>
-                <BreadcrumbPage>Crear</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-        </section>
-      </header>
+      <Header 
+        page="Agregar Nuevo Proveedor" 
+        breadcrumbs={[
+          { label: 'Proveedores', href: '/suppliers' },
+          { label: 'Crear' }
+        ]}
+      />
       <main>
+        <Card>
+          <CardContent className="pt-6">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -190,19 +170,19 @@ const CreateSupplier = () => {
                   control={form.control}
                   name='codigo_telefono_id'
                   render={({ field }) => (
-                    <>
+                    <FormItem className="col-span-1">
                       <FormControl>
-                        <Select onValueChange={field.onChange}>
+                        <Select onValueChange={field.onChange} value={field.value?.toString()}>
                           <SelectTrigger>
-                            <SelectValue placeholder={'0424'} />
+                            <SelectValue placeholder='Seleccione...' />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
                               <SelectLabel>Operadoras</SelectLabel>
-                              {ccs.map((cc) => (
+                              {ccs.filter(cc => cc.id != null).map((cc) => (
                                 <SelectItem
-                                  key={cc.codigo_telefono_id}
-                                  value={cc.codigo_telefono_id?.toString()}
+                                  key={cc.id}
+                                  value={String(cc.id)}
                                 >
                                   {cc.codigo_operadora}
                                 </SelectItem>
@@ -212,24 +192,23 @@ const CreateSupplier = () => {
                         </Select>
                       </FormControl>
                       <FormMessage />
-                    </>
+                    </FormItem>
                   )}
                 />
                 <FormField
                   control={form.control}
                   name='telefono'
                   render={({ field }) => (
-                    <>
+                    <FormItem className="col-span-3">
                       <FormControl>
                         <Input
                           id={field.name}
-                          className='col-span-3'
                           placeholder='Numero de teléfono'
                           {...field}
                         />
                       </FormControl>
                       <FormMessage />
-                    </>
+                    </FormItem>
                   )}
                 />
               </div>
@@ -239,6 +218,8 @@ const CreateSupplier = () => {
             </Button>
           </form>
         </Form>
+        </CardContent>
+        </Card>
       </main>
     </>
   )

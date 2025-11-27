@@ -7,15 +7,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { useToast } from '@/hooks/use-toast'
 import useProductStore from '@/stores/productStore'
 import { useAuth } from '@/contexts/authContext'
 import UpdateProductForm from '@/components/UpdateProductForm'
-import DeleteDialog from '@/components/DeleteDialog'
 import { Product } from '@/interfaces/models'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@/components/ui/alert-dialog'
 
 interface ProductActionsProps {
   product: Product
@@ -24,23 +33,41 @@ interface ProductActionsProps {
 const ProductActions = ({ product }: ProductActionsProps) => {
   const { toast } = useToast()
   const deleteProduct = useProductStore((state) => state.deleteProduct)
-  const [open, setOpen] = useState(false)
+  const [isEditOpen, setIsEditOpen] = useState(false)
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const { user } = useAuth()
 
   const onClose = () => {
-    setOpen(false)
+    setIsEditOpen(false)
   }
 
   const onDeleteItem = async () => {
-    if (!product.producto_id) return
+    const id = product.producto_id || product.id
+    if (!id) return
+    
+    // Close dialog first
+    setIsDeleteOpen(false)
+    
+    // Wait for animation
+    await new Promise(resolve => setTimeout(resolve, 300))
+
+    // FORCE body cleanup in case Radix failed to do it because the trigger unmounted
+    document.body.style.pointerEvents = 'auto'
+    document.body.style.overflow = 'auto'
+
     try {
-      await deleteProduct(product.producto_id)
+      await deleteProduct(id)
       toast({
         variant: 'destructive',
         title: 'Producto eliminado exitosamente del inventario'
       })
     } catch (error) {
       console.log(error)
+      toast({
+        variant: 'destructive',
+        title: 'Error al eliminar el producto',
+        description: 'Hubo un problema al intentar eliminar el producto.'
+      })
     }
   }
 
@@ -49,44 +76,68 @@ const ProductActions = ({ product }: ProductActionsProps) => {
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant='ghost' className='h-8 w-8 p-0'>
-          <span className='sr-only'>Abrir menu</span>
-          <MoreHorizontal className='h-4 w-4' />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align='end'>
-        <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-          <Pencil className='mr-2 h-4 w-4' />
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-              <span className="cursor-pointer">Editar</span>
-            </DialogTrigger>
-            <DialogContent
-              onKeyDown={(e) => e.stopPropagation()}
-              className='sm:max-w-[425px]'
-            >
-              {product.producto_id && (
-                <UpdateProductForm
-                  id={product.producto_id}
-                  onClose={onClose}
-                />
-              )}
-            </DialogContent>
-          </Dialog>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-          <Trash2 className='mr-2 h-4 w-4 text-red-800' />
-          <DeleteDialog
-            onDeleteItem={onDeleteItem}
-            description='Esta acción no se puede deshacer. Eliminará permanentemente el producto y los registros de movimientos asociados a él de nuestros servidores.'
-          />
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant='ghost' className='h-8 w-8 p-0'>
+            <span className='sr-only'>Abrir menu</span>
+            <MoreHorizontal className='h-4 w-4' />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align='end'>
+          <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+          <DropdownMenuItem onClick={() => setIsEditOpen(true)}>
+            <Pencil className='mr-2 h-4 w-4' />
+            Editar
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => setIsDeleteOpen(true)}>
+            <Trash2 className='mr-2 h-4 w-4 text-red-800' />
+            <span className="text-red-800">Eliminar</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+        <DialogContent
+          className='sm:max-w-[800px]'
+        >
+          {(product.producto_id || product.id) ? (
+            <UpdateProductForm
+              id={(product.producto_id || product.id)!}
+              onClose={onClose}
+            />
+          ) : (
+            <div className="p-6 text-center">
+              <h3 className="text-lg font-semibold text-red-600">Error</h3>
+              <p className="text-muted-foreground">
+                No se pudo cargar el formulario de edición porque el ID del producto no está definido.
+              </p>
+              <p className="text-xs text-muted-foreground mt-2">
+                Product Data: {JSON.stringify(product)}
+              </p>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta acción no se puede deshacer. Eliminará permanentemente el producto y los registros de movimientos asociados a él de nuestros servidores.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={onDeleteItem} className="bg-red-600 hover:bg-red-700">
+              Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   )
 }
 

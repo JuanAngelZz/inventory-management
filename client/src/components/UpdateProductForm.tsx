@@ -93,8 +93,8 @@ const UpdateProductForm = ({ id, onClose }: UpdateFormProps) => {
         nombre: selectedProduct.nombre,
         stock: selectedProduct.stock,
         descripcion: selectedProduct.descripcion,
-        precio_compra: selectedProduct.precio_compra,
-        precio_venta: selectedProduct.precio_venta,
+        precio_compra: Number(selectedProduct.precio_compra),
+        precio_venta: Number(selectedProduct.precio_venta),
         fecha_adquisicion: new Date(selectedProduct.fecha_adquisicion),
         fecha_vencimiento: new Date(selectedProduct.fecha_vencimiento),
         categoria_nombre: selectedProduct.categoria_nombre,
@@ -334,11 +334,16 @@ const UpdateProductForm = ({ id, onClose }: UpdateFormProps) => {
                       type='number'
                       min={0}
                       {...field}
+                      disabled
+                      className="bg-muted text-muted-foreground opacity-100"
                       onChange={(e) =>
                         field.onChange(parseInt(e.target.value) || 0)
                       }
                     />
                   </FormControl>
+                  <p className="text-[0.8rem] text-muted-foreground">
+                    El stock solo puede modificarse mediante movimientos de inventario.
+                  </p>
                   <FormMessage />
                 </>
               )}

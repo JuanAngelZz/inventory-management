@@ -33,6 +33,7 @@ const Movements = () => {
         data={movements}
         searchFor='producto_nombre'
         searchPlaceholder='Buscar por producto'
+        defaultSorting={[{ id: 'fecha', desc: true }]}
       />
     </>
   )
