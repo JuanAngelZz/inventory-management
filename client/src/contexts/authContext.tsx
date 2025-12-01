@@ -2,7 +2,6 @@ import { User } from '@/interfaces/models'
 import { AuthContextProps } from '@/interfaces/props'
 import {
   createContext,
-  ProviderProps,
   useContext,
   useEffect,
   useState
@@ -26,7 +25,7 @@ export const useAuth = () => {
 
 export const AuthContextProvider = ({
   children
-}: ProviderProps<JSX.Element>) => {
+}: { children: React.ReactNode }) => {
   const [isLogin, setIsLogin] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(true)
   const [token, setToken] = useState<string>('')

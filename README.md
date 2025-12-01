@@ -39,6 +39,19 @@ Esto iniciará:
 - **Backend:** [http://localhost:4000](http://localhost:4000)
 - **Base de Datos (MySQL):** Puerto 3307
 
+### 3.1. Modo Desarrollador (Hot-Reloading)
+
+Si deseas desarrollar y ver los cambios en tiempo real sin reconstruir los contenedores, utiliza el archivo `docker-compose.dev.yml`:
+
+```bash
+docker-compose -f docker-compose.dev.yml up --build
+```
+
+Esto habilitará:
+- **Hot-Reloading en Frontend:** Los cambios en `client/src` se reflejan instantáneamente.
+- **Auto-Restart en Backend:** El servidor se reinicia al modificar archivos en `server/`.
+- **Volúmenes:** El código local se monta dentro de los contenedores.
+
 ### 4. Inicializar la Base de Datos
 
 Una vez que los contenedores estén corriendo, puedes inicializar la base de datos visitando los siguientes endpoints en tu navegador o usando curl:

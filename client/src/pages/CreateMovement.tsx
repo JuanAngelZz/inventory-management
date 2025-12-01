@@ -96,7 +96,7 @@ const CreateMovement = () => {
           </p>
         ),
       })
-    } catch (error) {
+    } catch (error: any) {
       if (error.response && error.response.status === 400) {
         toast({
           title: 'Error al registrar movimiento',

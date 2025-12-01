@@ -214,7 +214,7 @@ export default function Charts() {
                   paddingAngle={5}
                   dataKey="value"
                 >
-                  {categoryStats.map((entry: any, index: number) => (
+                  {categoryStats.map((_: any, index: number) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>

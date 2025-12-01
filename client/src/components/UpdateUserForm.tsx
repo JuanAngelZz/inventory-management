@@ -49,7 +49,7 @@ const UpdateUserForm = ({ id, onClose }: UpdateFormProps) => {
     if (selectedUser) {
       form.reset({
         nombre: selectedUser.nombre,
-        rol: selectedUser.rol
+        rol: selectedUser.rol as "administrador" | "usuario"
       })
     }
   }, [selectedUser])

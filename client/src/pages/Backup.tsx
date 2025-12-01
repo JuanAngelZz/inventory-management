@@ -191,7 +191,7 @@ const Backup = () => {
                   size="lg" 
                   onClick={handleBackup} 
                   className="w-full md:w-auto"
-                  disabled={status === 'backing_up'}
+                  disabled={(status as string) === 'backing_up'}
                 >
                   <HardDrive className="mr-2 h-4 w-4" /> Iniciar Respaldo
                 </Button>

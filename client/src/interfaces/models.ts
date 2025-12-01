@@ -23,6 +23,7 @@ export interface Product {
 
 export interface Supplier {
   id?: number
+  proveedor_id?: number
   nombre: string
   tipo: string
   telefono: string

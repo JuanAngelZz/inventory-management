@@ -98,7 +98,18 @@ const ProductActions = ({ product }: ProductActionsProps) => {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+      <Dialog 
+        open={isEditOpen} 
+        onOpenChange={(open) => {
+          setIsEditOpen(open)
+          if (!open) {
+            setTimeout(() => {
+              document.body.style.pointerEvents = ''
+              document.body.style.overflow = ''
+            }, 300)
+          }
+        }}
+      >
         <DialogContent
           className='sm:max-w-[800px]'
         >

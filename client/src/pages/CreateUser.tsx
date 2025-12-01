@@ -25,16 +25,14 @@ import {
   SelectValue
 } from '@/components/ui/select'
 import { useToast } from '@/hooks/use-toast'
-import { Category } from '@/interfaces/models'
-import { categorySchema } from '@/schemas/categorySchema'
 import { userSchema } from '@/schemas/userForm'
-import useCategoryStore from '@/stores/categoryStore'
 import useUserStore from '@/stores/userStore'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Slash } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import { z } from 'zod'
+import { User } from '@/interfaces/models'
 
 const CreateUser = () => {
   const { toast } = useToast()
@@ -46,7 +44,7 @@ const CreateUser = () => {
     defaultValues: {
       nombre: '',
       contrasena: '',
-      rol: ''
+      rol: undefined as any
     }
   })
 

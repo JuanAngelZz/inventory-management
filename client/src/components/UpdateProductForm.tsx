@@ -163,7 +163,7 @@ const UpdateProductForm = ({ id, onClose }: UpdateFormProps) => {
               render={({ field }) => (
                 <>
                   <FormLabel>Proveedor</FormLabel>
-                  <Popover modal>
+                  <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
@@ -357,7 +357,7 @@ const UpdateProductForm = ({ id, onClose }: UpdateFormProps) => {
                     <FormLabel htmlFor={field.name}>
                       Fecha de adquisición
                     </FormLabel>
-                    <Popover modal>
+                    <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button variant='outline' className='w-full'>
@@ -393,7 +393,7 @@ const UpdateProductForm = ({ id, onClose }: UpdateFormProps) => {
                     <FormLabel htmlFor={field.name}>
                       Fecha de vencimiento
                     </FormLabel>
-                    <Popover modal>
+                    <Popover>
                       <PopoverTrigger asChild>
                         <FormControl className='col-span-3'>
                           <Button variant='outline' className='w-full'>
