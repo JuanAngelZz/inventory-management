@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useToast } from '@/hooks/use-toast'
 import useProductStore from '@/stores/productStore'
 import { useAuth } from '@/contexts/authContext'
@@ -41,6 +41,24 @@ const ProductActions = ({ product }: ProductActionsProps) => {
     setIsEditOpen(false)
   }
 
+  useEffect(() => {
+    if (!isEditOpen) {
+      setTimeout(() => {
+        document.body.style.pointerEvents = ''
+        document.body.style.overflow = ''
+      }, 500)
+    }
+  }, [isEditOpen])
+
+  useEffect(() => {
+    if (!isDeleteOpen) {
+      setTimeout(() => {
+        document.body.style.pointerEvents = ''
+        document.body.style.overflow = ''
+      }, 500)
+    }
+  }, [isDeleteOpen])
+
   const onDeleteItem = async () => {
     const id = product.producto_id || product.id
     if (!id) return
@@ -50,10 +68,6 @@ const ProductActions = ({ product }: ProductActionsProps) => {
     
     // Wait for animation
     await new Promise(resolve => setTimeout(resolve, 300))
-
-    // FORCE body cleanup in case Radix failed to do it because the trigger unmounted
-    document.body.style.pointerEvents = 'auto'
-    document.body.style.overflow = 'auto'
 
     try {
       await deleteProduct(id)
@@ -98,18 +112,7 @@ const ProductActions = ({ product }: ProductActionsProps) => {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <Dialog 
-        open={isEditOpen} 
-        onOpenChange={(open) => {
-          setIsEditOpen(open)
-          if (!open) {
-            setTimeout(() => {
-              document.body.style.pointerEvents = ''
-              document.body.style.overflow = ''
-            }, 300)
-          }
-        }}
-      >
+      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
         <DialogContent
           className='sm:max-w-[800px]'
         >
@@ -133,11 +136,12 @@ const ProductActions = ({ product }: ProductActionsProps) => {
       </Dialog>
 
       <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción no se puede deshacer. Eliminará permanentemente el producto y los registros de movimientos asociados a él de nuestros servidores.
+              Esta acción eliminará el producto de la lista activa, pero conservará su historial de movimientos.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

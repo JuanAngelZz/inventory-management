@@ -1,7 +1,8 @@
 import { Route, Routes } from 'react-router-dom'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
-import { AuthContextProvider } from './contexts/authContext'
+import { AuthContextProvider, useAuth } from './contexts/authContext'
+import { ProtectedRoute } from './components/ProtectedRoute'
 import Products from './pages/Products'
 import Categories from './pages/Categories'
 import Movements from './pages/Movements'
@@ -24,6 +25,16 @@ import ExpiringProducts from './pages/ExpiringProducts'
 function App() {
   return (
     <AuthContextProvider>
+      <AppRoutes />
+      <Toaster />
+    </AuthContextProvider>
+  )
+}
+
+function AppRoutes() {
+  const { user } = useAuth()
+
+  return (
       <Routes>
         <Route path='/login' element={<Login />} />
         <Route path='/*' element={<Dashboard />}>
@@ -31,24 +42,27 @@ function App() {
           <Route path='movements' element={<Movements />} />
           <Route path='movements/create' element={<CreateMovement />} />
           <Route path='products' element={<Products />} />
-          <Route path='products/create' element={<CreateProduct />} />
+          
+          <Route element={<ProtectedRoute isAllowed={!!user && user.rol === 'administrador'} />}>
+            <Route path='products/create' element={<CreateProduct />} />
+            <Route path='suppliers/create' element={<CreateSupplier />} />
+            <Route path='categories/create' element={<CreateCategory />} />
+            
+            <Route path='administrate' element={<Administrate />} />
+            <Route path='administrate/users' element={<Users />} />
+            <Route path='administrate/users/create' element={<CreateUser />} />
+            <Route path='administrate/users/edit/:id' element={<CreateUser />} />
+            <Route path='administrate/backup' element={<Backup />} />
+            <Route path='administrate/migrate' element={<Migrate />} />
+            <Route path='administrate/report' element={<Report />} />
+          <Route path='charts' element={<Charts />} />
+          </Route>
+
           <Route path='expiring-products' element={<ExpiringProducts />} />
           <Route path='suppliers' element={<Suppliers />} />
-          <Route path='suppliers/create' element={<CreateSupplier />} />
           <Route path='categories' element={<Categories />} />
-          <Route path='categories/create' element={<CreateCategory />} />
-          <Route path='charts' element={<Charts />} />
-          <Route path='administrate' element={<Administrate />} />
-          <Route path='administrate/users' element={<Users />} />
-          <Route path='administrate/users/create' element={<CreateUser />} />
-          <Route path='administrate/users/edit/:id' element={<CreateUser />} />
-          <Route path='administrate/backup' element={<Backup />} />
-          <Route path='administrate/migrate' element={<Migrate />} />
-          <Route path='administrate/report' element={<Report />} />
         </Route>
       </Routes>
-      <Toaster />
-    </AuthContextProvider>
   )
 }
 

@@ -33,7 +33,7 @@ import { Calendar } from './ui/calendar'
 import { CalendarIcon, Check, ChevronsUpDown } from 'lucide-react'
 import { format } from '@formkit/tempo'
 import useProductStore from '@/stores/productStore'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import useCategoryStore from '@/stores/categoryStore'
 import { subDays } from 'date-fns'
 import { Product } from '@/interfaces/models'
@@ -60,6 +60,9 @@ const UpdateProductForm = ({ id, onClose }: UpdateFormProps) => {
 
   const suppliers = useSupplierStore((state) => state.suppliers)
   const getSuppliers = useSupplierStore((state) => state.getSuppliers)
+
+  const [isAdquisitionOpen, setIsAdquisitionOpen] = useState(false)
+  const [isExpirationOpen, setIsExpirationOpen] = useState(false)
 
   const { toast } = useToast()
 
@@ -357,7 +360,7 @@ const UpdateProductForm = ({ id, onClose }: UpdateFormProps) => {
                     <FormLabel htmlFor={field.name}>
                       Fecha de adquisición
                     </FormLabel>
-                    <Popover>
+                    <Popover open={isAdquisitionOpen} onOpenChange={setIsAdquisitionOpen}>
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button variant='outline' className='w-full'>
@@ -374,7 +377,10 @@ const UpdateProductForm = ({ id, onClose }: UpdateFormProps) => {
                         <Calendar
                           mode='single'
                           selected={field.value}
-                          onSelect={(date) => field.onChange(date)}
+                          onSelect={(date) => {
+                            field.onChange(date)
+                            setIsAdquisitionOpen(false)
+                          }}
                           disabled={(date) => date > new Date()}
                           initialFocus
                         />
@@ -393,7 +399,7 @@ const UpdateProductForm = ({ id, onClose }: UpdateFormProps) => {
                     <FormLabel htmlFor={field.name}>
                       Fecha de vencimiento
                     </FormLabel>
-                    <Popover>
+                    <Popover open={isExpirationOpen} onOpenChange={setIsExpirationOpen}>
                       <PopoverTrigger asChild>
                         <FormControl className='col-span-3'>
                           <Button variant='outline' className='w-full'>
@@ -410,7 +416,10 @@ const UpdateProductForm = ({ id, onClose }: UpdateFormProps) => {
                         <Calendar
                           mode='single'
                           selected={field.value}
-                          onSelect={(date) => field.onChange(date)}
+                          onSelect={(date) => {
+                            field.onChange(date)
+                            setIsExpirationOpen(false)
+                          }}
                           disabled={(date) =>
                             date < new Date() || date < subDays(new Date(), 30)
                           }

@@ -17,8 +17,10 @@ export interface Product {
   fecha_vencimiento: string
   categoria_id?: number
   categoria_nombre?: string
+  categoria_deleted_at?: string
   proveedor_id?: number
   proveedor_nombre?: string
+  proveedor_deleted_at?: string
 }
 
 export interface Supplier {

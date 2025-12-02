@@ -10,7 +10,7 @@ import {
   Database, 
   FileText, 
   HardDriveDownload, 
-  ShieldCheck,
+
   ArrowRight
 } from 'lucide-react'
 
@@ -81,15 +81,6 @@ const Administrate = () => {
           path="migrate"
           iconColor="text-orange-500"
           bgColor="bg-orange-500/10"
-        />
-
-        <AdminCard 
-          title="Auditoría (Próximamente)" 
-          description="Registro de actividades y cambios en el sistema." 
-          icon={ShieldCheck} 
-          path="#"
-          iconColor="text-slate-500"
-          bgColor="bg-slate-500/10"
         />
       </section>
     </div>

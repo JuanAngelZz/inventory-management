@@ -59,7 +59,7 @@ export const loginUser = async (
 
     const jwt = createToken({ nombre: rows[0].nombre })
     const user = {
-      usuario_id: rows[0].usuario_id,
+      usuario_id: rows[0].id,
       nombre: rows[0].nombre,
       rol: rows[0].rol
     }
@@ -108,7 +108,7 @@ export const verifyUser = async (req: Request, res: Response) => {
 
 export const getUsers = async (req: Request, res: Response) => {
   try {
-    const [rows] = await conn.query<RowDataPacket[]>('SELECT * FROM usuarios')
+    const [rows] = await conn.query<RowDataPacket[]>('SELECT id AS usuario_id, nombre, rol FROM usuarios')
 
     return res.json(rows)
   } catch (error) {
@@ -121,7 +121,7 @@ export const getUser = async (req: Request, res: Response) => {
 
   try {
     const [rows] = await conn.query<RowDataPacket[]>(
-      'SELECT * FROM usuarios WHERE usuario_id = ?',
+      'SELECT id AS usuario_id, nombre, rol FROM usuarios WHERE id = ?',
       [id]
     )
 
@@ -138,12 +138,15 @@ export const getUser = async (req: Request, res: Response) => {
 export const updateUser = async (req: Request, res: Response) => {
   const { id } = req.params
   const user: User = req.body
-  const encryptedPassword = await bcrypt.hash(user.contrasena, 10)
-  user.contrasena = encryptedPassword
+
+  if (user.contrasena) {
+    const encryptedPassword = await bcrypt.hash(user.contrasena, 10)
+    user.contrasena = encryptedPassword
+  }
 
   try {
     const [rows] = await conn.query<RowDataPacket[]>(
-      'SELECT * FROM usuarios WHERE usuario_id = ?',
+      'SELECT * FROM usuarios WHERE id = ?',
       [id]
     )
 
@@ -151,7 +154,7 @@ export const updateUser = async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'User not found' })
     }
 
-    const query = 'UPDATE usuarios SET ? WHERE usuario_id = ?'
+    const query = 'UPDATE usuarios SET ? WHERE id = ?'
     await conn.query(query, [user, id])
 
     return res.sendStatus(204)
@@ -173,7 +176,11 @@ export const deleteUser = async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'User not found' })
     }
 
-    const query = 'DELETE FROM usuarios WHERE usuario_id = ?'
+    if (rows[0].rol === 'administrador') {
+      return res.status(403).json({ error: 'No se puede eliminar a un administrador' })
+    }
+
+    const query = 'DELETE FROM usuarios WHERE id = ?'
     await conn.query(query, [id])
 
     return res.sendStatus(204)

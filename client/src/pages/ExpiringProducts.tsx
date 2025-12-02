@@ -19,41 +19,34 @@ import {
 
 export default function ExpiringProducts() {
   const products = useProductStore((state) => state.products)
-  const getProducts = useProductStore((state) => state.getProducts)
+  const getExpiringProducts = useProductStore((state) => state.getExpiringProducts)
+  const setProducts = useProductStore((state) => state.setProducts)
 
   useEffect(() => {
-    getProducts()
+    setProducts([])
+    getExpiringProducts()
   }, [])
 
-  // Filter products expiring in next 30 days
+  // Products are already filtered by backend, but we ensure sorting here too
   const expiringProducts = useMemo(() => {
-    const today = new Date()
-    const thirtyDaysFromNow = new Date()
-    thirtyDaysFromNow.setDate(today.getDate() + 30)
-
-    return products
-      .filter((product) => {
-        if (!product.fecha_vencimiento) return false
-        const expirationDate = new Date(product.fecha_vencimiento)
-        return expirationDate > today && expirationDate <= thirtyDaysFromNow
-      })
-      .sort((a, b) => {
-        const dateA = new Date(a.fecha_vencimiento!)
-        const dateB = new Date(b.fecha_vencimiento!)
-        return dateA.getTime() - dateB.getTime()
-      })
+    return [...products].sort((a, b) => {
+      if (!a.fecha_vencimiento || !b.fecha_vencimiento) return 0
+      const dateA = new Date(a.fecha_vencimiento)
+      const dateB = new Date(b.fecha_vencimiento)
+      return dateA.getTime() - dateB.getTime()
+    })
   }, [products])
 
   // Calculate urgency stats
   const urgencyStats = useMemo(() => {
     const critical = expiringProducts.filter(p => {
       const days = differenceInDays(new Date(p.fecha_vencimiento!), new Date())
-      return days <= 7
+      return days <= 30
     }).length
 
     const warning = expiringProducts.filter(p => {
       const days = differenceInDays(new Date(p.fecha_vencimiento!), new Date())
-      return days > 7 && days <= 15
+      return days > 30 && days <= 60
     }).length
 
     const normal = expiringProducts.length - critical - warning
@@ -64,9 +57,9 @@ export default function ExpiringProducts() {
   const getUrgencyBadge = (expirationDate: string) => {
     const days = differenceInDays(new Date(expirationDate), new Date())
     
-    if (days <= 7) {
+    if (days <= 30) {
       return <Badge variant="destructive" className="font-normal">Crítico ({days}d)</Badge>
-    } else if (days <= 15) {
+    } else if (days <= 60) {
       return <Badge className="bg-yellow-500 hover:bg-yellow-600 font-normal">Advertencia ({days}d)</Badge>
     } else {
       return <Badge variant="outline" className="font-normal">Normal ({days}d)</Badge>
@@ -179,7 +172,7 @@ export default function ExpiringProducts() {
         <Card className="border-l-4 border-l-red-500">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Críticos (≤7 días)
+              Críticos (≤30 días)
             </CardTitle>
             <AlertTriangle className="h-4 w-4 text-red-500" />
           </CardHeader>
@@ -194,7 +187,7 @@ export default function ExpiringProducts() {
         <Card className="border-l-4 border-l-yellow-500">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Advertencia (8-15 días)
+              Advertencia (31-60 días)
             </CardTitle>
             <AlertTriangle className="h-4 w-4 text-yellow-500" />
           </CardHeader>
@@ -209,7 +202,7 @@ export default function ExpiringProducts() {
         <Card className="border-l-4 border-l-blue-500">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Normal (16-30 días)
+              Normal (&gt;60 días)
             </CardTitle>
             <AlertTriangle className="h-4 w-4 text-blue-500" />
           </CardHeader>
@@ -234,7 +227,7 @@ export default function ExpiringProducts() {
           <CardHeader>
             <CardTitle>Sin productos próximos a vencer</CardTitle>
             <CardDescription>
-              No hay productos que venzan en los próximos 30 días.
+              No hay productos que venzan en los próximos 6 meses.
             </CardDescription>
           </CardHeader>
         </Card>

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "dev": "ts-node-dev --respawn server/index.ts",
+    "dev": "ts-node-dev --respawn --poll server/index.ts",
     "start": "node dist/index.js"
   },
   "keywords": [],

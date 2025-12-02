@@ -58,6 +58,19 @@ const tools: any = [
             }
           }
         }
+      },
+      {
+        name: 'getExpiringProducts',
+        description: 'Get a list of products that are expiring within the next 6 months.',
+        parameters: {
+          type: SchemaType.OBJECT,
+          properties: {
+            limit: {
+              type: SchemaType.NUMBER,
+              description: 'The maximum number of products to return. Default is 10.'
+            }
+          }
+        }
       }
     ]
   }
@@ -114,13 +127,28 @@ async function getLowStock(args: { threshold?: number } = {}) {
   return rows
 }
 
+async function getExpiringProducts(args: { limit?: number } = {}) {
+  const limit = args.limit || 10
+  const [rows] = await conn.query<RowDataPacket[]>(
+    `SELECT id, nombre, stock, fecha_vencimiento 
+     FROM productos 
+     WHERE deleted_at IS NULL 
+       AND fecha_vencimiento BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 6 MONTH)
+     ORDER BY fecha_vencimiento ASC 
+     LIMIT ?`,
+    [limit]
+  )
+  return rows
+}
+
 // --- Controller ---
 
 const functions: Record<string, Function> = {
   listProducts,
   searchProducts,
   getStats,
-  getLowStock
+  getLowStock,
+  getExpiringProducts
 }
 
 export const postChat = async (
@@ -142,7 +170,12 @@ export const postChat = async (
       - The chat history only contains text, not previous tool outputs. 
       - If a user asks a follow-up question about a product (like "how much stock?") and you don't see the number in the recent text history, YOU MUST CALL the 'searchProducts' tool again to get the fresh data.
       - Do not guess or refuse to answer if you can look it up.
-      - Always be polite and professional.`
+      - Always be polite and professional.
+      - When presenting lists of products (like expiring products or search results), ALWAYS use this specific format for each item:
+        • 📦 **[Product Name]**
+           └─ 🔢 Stock: [Units] un.
+           └─ 📅 Info: [Relevant Info (e.g., Expiration Date)]
+      - Do not use Markdown tables.`
     })
 
     // Gemini requires history to start with a user message

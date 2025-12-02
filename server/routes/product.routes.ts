@@ -4,7 +4,8 @@ import {
   deleteProduct,
   getProduct,
   getProducts,
-  updateProduct
+  updateProduct,
+  getExpiringProducts
 } from '../controllers/product.controller'
 import { partialValidate, validateSchema } from '../middlewares/validateSchema'
 import { productSchema } from '../schemas/product.schema'
@@ -13,6 +14,7 @@ import { validateToken } from '../middlewares/validateToken'
 const router = Router()
 
 router.get('/products', validateToken, getProducts)
+router.get('/products/expiring', validateToken, getExpiringProducts)
 router.post(
   '/products',
   validateToken,

@@ -70,7 +70,7 @@ export const getDashboardStats = async (req: Request, res: Response) => {
     const totalProducts = productsCount[0].count
 
     // Low Stock Count
-    const [lowStockCount]: any = await pool.query('SELECT COUNT(*) as count FROM productos WHERE stock < 10')
+    const [lowStockCount]: any = await pool.query('SELECT COUNT(*) as count FROM productos WHERE stock <= 10')
     const lowStock = lowStockCount[0].count
 
     // 4. Top Selling Products
@@ -104,7 +104,7 @@ export const getDashboardStats = async (req: Request, res: Response) => {
     const [lowStockItems]: any = await pool.query(`
       SELECT id, nombre, stock 
       FROM productos 
-      WHERE stock < 10 
+      WHERE stock <= 10 
       ORDER BY stock ASC 
       LIMIT 5
     `)

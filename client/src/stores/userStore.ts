@@ -34,6 +34,7 @@ const useUserStore = create<UserStore>((set, get) => ({
       get().getUsers()
     } catch (error) {
       console.log(error)
+      throw error
     }
   },
 
@@ -43,6 +44,7 @@ const useUserStore = create<UserStore>((set, get) => ({
       get().getUsers()
     } catch (error) {
       console.log(error)
+      throw error
     }
   },
 
@@ -52,6 +54,7 @@ const useUserStore = create<UserStore>((set, get) => ({
       get().getUsers()
     } catch (error) {
       console.log(error)
+      throw error
     }
   }
 }))

@@ -8,7 +8,8 @@ CREATE TABLE codigos_telefono (
 -- Tabla de categorías de productos
 CREATE TABLE categorias (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  nombre VARCHAR(255) NOT NULL UNIQUE
+  nombre VARCHAR(255) NOT NULL UNIQUE,
+  deleted_at DATETIME DEFAULT NULL
 );
 
 -- Tabla de proveedores
@@ -19,6 +20,7 @@ CREATE TABLE proveedores (
   telefono CHAR(7) NOT NULL,
   direccion VARCHAR(255) NOT NULL,
   codigo_telefono_id INT NOT NULL,
+  deleted_at DATETIME DEFAULT NULL,
   FOREIGN KEY (codigo_telefono_id) REFERENCES codigos_telefono(id)
 );
 
@@ -34,6 +36,7 @@ CREATE TABLE productos (
   fecha_vencimiento DATETIME NOT NULL,
   categoria_id INT NOT NULL,
   proveedor_id INT NOT NULL,
+  deleted_at DATETIME DEFAULT NULL,
   FOREIGN KEY (categoria_id) REFERENCES categorias(id),
   FOREIGN KEY (proveedor_id) REFERENCES proveedores(id)
 );

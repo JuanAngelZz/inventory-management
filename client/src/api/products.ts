@@ -5,6 +5,9 @@ import { GetProductResponse, GetProductsResponse } from '@/interfaces/api'
 export const getAllProducts = async (): Promise<GetProductsResponse> =>
   axios.get('/products')
 
+export const getExpiringProducts = async (): Promise<GetProductsResponse> =>
+  axios.get('/products/expiring')
+
 export const getProduct = async (id: number): Promise<GetProductResponse> =>
   axios.get(`/products/${id}`)
 

@@ -4,7 +4,8 @@ import {
   deleteProduct,
   getAllProducts,
   getProduct,
-  updateProduct
+  updateProduct,
+  getExpiringProducts
 } from '../api/products'
 import { Product } from '@/interfaces/models'
 import { ProductStore } from '@/interfaces/stores'
@@ -19,6 +20,15 @@ const useProductStore = create<ProductStore>((set, get) => ({
   getProducts: async () => {
     try {
       const response = await getAllProducts()
+      get().setProducts(response.data)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+
+  getExpiringProducts: async () => {
+    try {
+      const response = await getExpiringProducts()
       get().setProducts(response.data)
     } catch (error) {
       console.log(error)

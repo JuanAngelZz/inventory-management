@@ -4,6 +4,12 @@ import { ArrowUpDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import ProductActions from '@/components/ProductActions'
 import { Badge } from '@/components/ui/badge'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from '@/components/ui/popover'
+import { format } from '@formkit/tempo'
 
 export const productColumns: ColumnDef<Product>[] = [
   {
@@ -32,11 +38,34 @@ export const productColumns: ColumnDef<Product>[] = [
         <ArrowUpDown className='ml-2 h-4 w-4' />
       </Button>
     ),
-    cell: ({ row }) => (
-      <Badge variant="secondary" className="font-normal">
-        {row.getValue('categoria_nombre')}
-      </Badge>
-    )
+    cell: ({ row }) => {
+      const name = row.getValue('categoria_nombre') as string
+      const deletedAt = row.original.categoria_deleted_at
+
+      if (deletedAt) {
+        const cleanName = name.split('_deleted_')[0]
+        return (
+          <Popover>
+            <PopoverTrigger asChild>
+              <div className="font-medium text-red-500 cursor-help underline decoration-dotted">
+                {cleanName}
+              </div>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-2">
+              <p className="text-sm text-muted-foreground">
+                Categoría eliminada el {format(deletedAt, { date: 'medium', time: 'short' }, 'es')}
+              </p>
+            </PopoverContent>
+          </Popover>
+        )
+      }
+
+      return (
+        <Badge variant="secondary" className="font-normal">
+          {name}
+        </Badge>
+      )
+    }
   },
   {
     accessorKey: 'proveedor_nombre',
@@ -50,9 +79,30 @@ export const productColumns: ColumnDef<Product>[] = [
         <ArrowUpDown className='ml-2 h-4 w-4' />
       </Button>
     ),
-    cell: ({ row }) => (
-      <div className="text-muted-foreground">{row.getValue('proveedor_nombre')}</div>
-    )
+    cell: ({ row }) => {
+      const name = row.getValue('proveedor_nombre') as string
+      const deletedAt = row.original.proveedor_deleted_at
+
+      if (deletedAt) {
+        const cleanName = name.split('_deleted_')[0]
+        return (
+          <Popover>
+            <PopoverTrigger asChild>
+              <div className="font-medium text-red-500 cursor-help underline decoration-dotted">
+                {cleanName}
+              </div>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-2">
+              <p className="text-sm text-muted-foreground">
+                Proveedor eliminado el {format(deletedAt, { date: 'medium', time: 'short' }, 'es')}
+              </p>
+            </PopoverContent>
+          </Popover>
+        )
+      }
+
+      return <div className="text-muted-foreground">{name}</div>
+    }
   },
   {
     accessorKey: 'precio_venta',
@@ -87,7 +137,7 @@ export const productColumns: ColumnDef<Product>[] = [
     cell: ({ row }) => {
       const stock = row.getValue('stock') as number
       return (
-        <Badge variant={stock < 10 ? "destructive" : "outline"}>
+        <Badge variant={stock <= 10 ? "destructive" : "outline"}>
           {stock} u.
         </Badge>
       )

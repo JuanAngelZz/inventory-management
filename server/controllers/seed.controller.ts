@@ -14,10 +14,9 @@ const getRandomNumber = (min: number, max: number) => {
 
 // Helper function to generate a random date within the last N months
 const getRandomDate = (monthsBack: number) => {
-  const date = new Date()
-  date.setMonth(date.getMonth() - getRandomNumber(0, monthsBack))
-  date.setDate(getRandomNumber(1, 28))
-  return date
+  const end = new Date().getTime()
+  const start = new Date().setMonth(new Date().getMonth() - monthsBack)
+  return new Date(start + Math.random() * (end - start))
 }
 
 // Data for seeding - Venezuelan Context
@@ -34,16 +33,16 @@ const categories = [
 ]
 
 const suppliers = [
-  { name: 'Alimentos Polar', type: 'J' },
-  { name: 'Plumrose Latinoamericana', type: 'J' },
-  { name: 'Nestlé Venezuela', type: 'J' },
-  { name: 'Coca-Cola FEMSA', type: 'J' },
-  { name: 'Procter & Gamble', type: 'J' },
-  { name: 'Distribuidora Heinz', type: 'J' },
-  { name: 'Pepsi-Cola Venezuela', type: 'J' },
-  { name: 'Corporación Inlaca', type: 'J' },
-  { name: 'Puro Lomo', type: 'J' },
-  { name: 'Farmatodo', type: 'J' }
+  { name: 'Alimentos Polar', type: 'Proveedor de Alimentos', address: 'Av. Principal de Los Cortijos de Lourdes, Caracas' },
+  { name: 'Plumrose Latinoamericana', type: 'Proveedor de Embutidos', address: 'Av. Urdaneta, Edif. Plumrose, Caracas' },
+  { name: 'Nestlé Venezuela', type: 'Proveedor de Alimentos', address: 'Av. Principal de La Castellana, Caracas' },
+  { name: 'Coca-Cola FEMSA', type: 'Proveedor de Bebidas', address: 'Av. Principal de Los Ruices, Caracas' },
+  { name: 'Procter & Gamble', type: 'Proveedor de Cuidado Personal', address: 'La Trinidad, Caracas' },
+  { name: 'Distribuidora Heinz', type: 'Proveedor de Alimentos', address: 'San Joaquin, Carabobo' },
+  { name: 'Pepsi-Cola Venezuela', type: 'Proveedor de Bebidas', address: 'Av. Principal de Los Cortijos, Caracas' },
+  { name: 'Corporación Inlaca', type: 'Proveedor de Lácteos', address: 'Zona Industrial Valencia, Carabobo' },
+  { name: 'Puro Lomo', type: 'Proveedor de Carnes', address: 'Maracay, Aragua' },
+  { name: 'Farmatodo', type: 'Proveedor de Misceláneos', address: 'Av. Rómulo Gallegos, Caracas' }
 ]
 
 const users = ['Juan', 'María', 'Carlos', 'Ana', 'Luis', 'Sofía', 'Pedro', 'Laura', 'José', 'Elena']
@@ -157,7 +156,7 @@ export const seed = async (req: Request, res: Response) => {
           supplier.name,
           supplier.type,
           getRandomNumber(1000000, 9999999).toString(),
-          'Zona Industrial, Valencia, Carabobo', // Generic Venezuelan address
+          supplier.address,
           getRandomElement(insertedPhoneCodeIds)
         ]
       )
@@ -186,7 +185,7 @@ export const seed = async (req: Request, res: Response) => {
       const price = getRandomNumber(2, 50) // Prices in USD equivalent roughly
       const acquisitionDate = getRandomDate(6) // Acquired within last 6 months
       const expirationDate = new Date()
-      expirationDate.setDate(expirationDate.getDate() + getRandomNumber(30, 365))
+      expirationDate.setDate(expirationDate.getDate() + getRandomNumber(5, 365))
 
       // 1. Create Product with initial 0 stock (will update later)
       const [productResult]: any = await pool.query(

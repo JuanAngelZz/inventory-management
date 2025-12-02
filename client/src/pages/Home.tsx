@@ -22,9 +22,12 @@ import { useQuery } from '@tanstack/react-query'
 import { getDashboardStats, DashboardStats } from '@/api/stats'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { useAuth } from '@/contexts/authContext'
+import { QuickSaleWidget } from '@/components/QuickSaleWidget'
 
 const Home = () => {
   const navigate = useNavigate()
+  const { user } = useAuth()
   
   const { data: stats, isLoading } = useQuery<DashboardStats>({
     queryKey: ['dashboardStats'],
@@ -100,6 +103,11 @@ const Home = () => {
           icon={Package}
           color="#8b5cf6" // violet-500
         />
+      </section>
+
+      {/* Quick Sale Widget */}
+      <section>
+        <QuickSaleWidget />
       </section>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
@@ -189,38 +197,42 @@ const Home = () => {
             </CardContent>
           </Card>
           
-          <Card className="hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors cursor-pointer" onClick={() => navigate('/products/create')}>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Catálogo</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-2 text-lg font-bold text-primary">
-                <Plus className="h-5 w-5" /> Agregar Producto
-              </div>
-            </CardContent>
-          </Card>
+          {user.rol === 'administrador' && (
+            <>
+              <Card className="hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors cursor-pointer" onClick={() => navigate('/products/create')}>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Catálogo</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center gap-2 text-lg font-bold text-primary">
+                    <Plus className="h-5 w-5" /> Agregar Producto
+                  </div>
+                </CardContent>
+              </Card>
 
-          <Card className="hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors cursor-pointer" onClick={() => navigate('/administrate/report')}>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Reportes</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-2 text-lg font-bold text-primary">
-                <FileText className="h-5 w-5" /> Generar Reporte
-              </div>
-            </CardContent>
-          </Card>
+              <Card className="hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors cursor-pointer" onClick={() => navigate('/administrate/report')}>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Reportes</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center gap-2 text-lg font-bold text-primary">
+                    <FileText className="h-5 w-5" /> Generar Reporte
+                  </div>
+                </CardContent>
+              </Card>
 
-          <Card className="hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors cursor-pointer" onClick={() => navigate('/suppliers/create')}>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Proveedores</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-2 text-lg font-bold text-primary">
-                <Users className="h-5 w-5" /> Nuevo Proveedor
-              </div>
-            </CardContent>
-          </Card>
+              <Card className="hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors cursor-pointer" onClick={() => navigate('/suppliers/create')}>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Proveedores</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center gap-2 text-lg font-bold text-primary">
+                    <Users className="h-5 w-5" /> Nuevo Proveedor
+                  </div>
+                </CardContent>
+              </Card>
+            </>
+          )}
         </div>
       </section>
     </div>

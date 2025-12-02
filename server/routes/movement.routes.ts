@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import {
   createMovement,
+  createBulkMovements,
   getMovement,
   getMovements
   // updateMovement
@@ -19,6 +20,7 @@ router.post(
   validateSchema(movementSchema),
   createMovement
 )
+router.post('/movements/bulk', validateToken, createBulkMovements)
 
 router.get('/movements/:id', validateToken, getMovement)
 // router.put('/movements/:id', updateMovement)

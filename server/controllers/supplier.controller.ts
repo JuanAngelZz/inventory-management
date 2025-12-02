@@ -12,6 +12,7 @@ export const getSuppliers = async (
     CONCAT(codigos_telefono.codigo_operadora, '-', proveedores.telefono) AS numero_telefono
     FROM proveedores
     JOIN codigos_telefono ON proveedores.codigo_telefono_id = codigos_telefono.id
+    WHERE proveedores.deleted_at IS NULL
     ORDER BY proveedores.id DESC
   `
 
@@ -86,7 +87,8 @@ export const deleteSupplier = async (
   res: Response
 ): Promise<Response> => {
   const { id } = req.params
-  const query = 'DELETE FROM proveedores WHERE id = ?'
+  const query =
+    "UPDATE proveedores SET deleted_at = NOW(), nombre = CONCAT(nombre, '_deleted_', UNIX_TIMESTAMP()) WHERE id = ?"
 
   try {
     const [row] = await conn.query<ResultSetHeader>(query, [id])

@@ -93,7 +93,14 @@ const EditUserDialog = ({ user, open, onOpenChange }: { user: User | null, open:
   }, [user, form])
 
   const onSubmit = async (data: z.infer<typeof editUserSchema>) => {
-    if (!user?.usuario_id) return
+    if (!user?.usuario_id) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "No se pudo identificar al usuario. Por favor recargue la página."
+      })
+      return
+    }
 
     try {
       const updateData: any = {
@@ -213,61 +220,60 @@ const Users = () => {
     user.nombre.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
-  const UserCard = ({ user }: { user: User }) => (
-    <Card className="hover:shadow-md transition-shadow">
-      <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
-        <div className="flex items-center gap-3">
-          <Avatar className="h-10 w-10 border">
-            <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${user.nombre}`} />
-            <AvatarFallback><UserIcon /></AvatarFallback>
-          </Avatar>
-          <div>
-            <CardTitle className="text-base font-medium">{user.nombre}</CardTitle>
-            <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-              <Shield className="h-3 w-3" /> {user.rol}
-            </p>
+  const UserCard = ({ user }: { user: User }) => {
+    const isAdmin = user.rol === 'administrador';
+    const roleColor = isAdmin ? 'text-purple-700 bg-purple-50 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800' : 'text-blue-700 bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800';
+    const avatarRing = isAdmin ? 'ring-purple-100 dark:ring-purple-900' : 'ring-blue-100 dark:ring-blue-900';
+
+    return (
+      <Card className={`group hover:shadow-lg transition-all duration-300 border-l-4 ${isAdmin ? 'border-l-purple-500' : 'border-l-blue-500'}`}>
+        <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+          <div className="flex items-center gap-4">
+            <div className={`p-1 rounded-full ring-4 ${avatarRing} transition-all`}>
+              <Avatar className="h-12 w-12 border-2 border-white dark:border-gray-950 shadow-sm">
+                <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${user.nombre}`} />
+                <AvatarFallback><UserIcon /></AvatarFallback>
+              </Avatar>
+            </div>
+            <div>
+              <CardTitle className="text-lg font-semibold tracking-tight">{user.nombre}</CardTitle>
+              <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mt-1.5 border ${roleColor}`}>
+                <Shield className="w-3 h-3 mr-1.5" />
+                {user.rol ? user.rol.charAt(0).toUpperCase() + user.rol.slice(1) : 'Usuario'}
+              </div>
+            </div>
           </div>
-        </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreVertical className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onSelect={(e) => {
-              e.preventDefault()
-              setUserToEdit(user)
-            }}>
-              Editar
-            </DropdownMenuItem>
-            <DropdownMenuItem 
-              className="text-red-600 focus:text-red-600" 
-              onSelect={(e) => {
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="sr-only">Open menu</span>
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onSelect={(e) => {
                 e.preventDefault()
-                setUserToDelete(user.usuario_id || null)
-              }}
-            >
-              Eliminar
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </CardHeader>
-      <CardContent>
-        <div className="flex items-center gap-2 mt-2">
-          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-            user.rol === 'administrador' 
-              ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300' 
-              : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
-          }`}>
-            <Shield className="w-3 h-3 mr-1" />
-            {user.rol}
-          </span>
-        </div>
-      </CardContent>
-    </Card>
-  )
+                setUserToEdit(user)
+              }}>
+                Editar
+              </DropdownMenuItem>
+              {user.rol !== 'administrador' && (
+                <DropdownMenuItem 
+                  className="text-red-600 focus:text-red-600" 
+                  onSelect={(e) => {
+                    e.preventDefault()
+                    setUserToDelete(user.usuario_id || null)
+                  }}
+                >
+                  Eliminar
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </CardHeader>
+      </Card>
+    )
+  }
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">

@@ -11,6 +11,9 @@ export const getMovement = async (id: number): Promise<GetMovementResponse> =>
 export const createMovement = async (movement: Movement): Promise<void> =>
   axios.post('/movements', movement)
 
+export const createBulkMovements = async (movements: Movement[]): Promise<void> =>
+  axios.post('/movements/bulk', movements)
+
 export const updateMovement = async (
   id: number,
   movement: Movement

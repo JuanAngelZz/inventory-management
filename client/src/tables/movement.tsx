@@ -4,6 +4,11 @@ import { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from '@/components/ui/popover'
 
 export const movementColumns: ColumnDef<Movement>[] = [
   {
@@ -21,7 +26,29 @@ export const movementColumns: ColumnDef<Movement>[] = [
       )
     },
     cell: ({ row }) => {
-      return <div className="font-medium">{row.getValue('producto_nombre')}</div>
+      const name = row.getValue('producto_nombre') as string
+      // @ts-ignore
+      const deletedAt = row.original.producto_deleted_at
+
+      if (deletedAt) {
+        const cleanName = name.split('_deleted_')[0]
+        return (
+          <Popover>
+            <PopoverTrigger asChild>
+              <div className="font-medium text-red-500 cursor-help underline decoration-dotted">
+                {cleanName}
+              </div>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-2">
+              <p className="text-sm text-muted-foreground">
+                Producto eliminado el {format(deletedAt, { date: 'medium', time: 'short' }, 'es')}
+              </p>
+            </PopoverContent>
+          </Popover>
+        )
+      }
+
+      return <div className="font-medium">{name}</div>
     }
   },
   {

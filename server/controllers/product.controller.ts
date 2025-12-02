@@ -11,11 +11,55 @@ export const getProducts = async (
   const query = `
     SELECT productos.*, 
            categorias.nombre AS categoria_nombre,
-           proveedores.nombre AS proveedor_nombre
+           categorias.deleted_at AS categoria_deleted_at,
+           proveedores.nombre AS proveedor_nombre,
+           proveedores.deleted_at AS proveedor_deleted_at
     FROM productos
     JOIN categorias ON productos.categoria_id = categorias.id
     JOIN proveedores ON productos.proveedor_id = proveedores.id
+    WHERE productos.deleted_at IS NULL
     ORDER BY productos.id DESC
+  `
+
+  try {
+    const [rows] = await conn.query<RowDataPacket[]>(query)
+
+    const products = rows.map((product) => {
+      return {
+        ...product,
+        fecha_adquisicion: format(
+          new Date(product.fecha_adquisicion),
+          'YYYY-MM-DD'
+        ),
+        fecha_vencimiento: format(
+          new Date(product.fecha_vencimiento),
+          'YYYY-MM-DD'
+        )
+      }
+    })
+
+    return res.json(products)
+  } catch (error) {
+    return res.status(500).json({ error })
+  }
+}
+
+export const getExpiringProducts = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const query = `
+    SELECT productos.*, 
+           categorias.nombre AS categoria_nombre,
+           categorias.deleted_at AS categoria_deleted_at,
+           proveedores.nombre AS proveedor_nombre,
+           proveedores.deleted_at AS proveedor_deleted_at
+    FROM productos
+    JOIN categorias ON productos.categoria_id = categorias.id
+    JOIN proveedores ON productos.proveedor_id = proveedores.id
+    WHERE productos.deleted_at IS NULL
+      AND productos.fecha_vencimiento BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 6 MONTH)
+    ORDER BY productos.fecha_vencimiento ASC
   `
 
   try {
@@ -49,7 +93,9 @@ export const getProduct = async (
   const query = `
     SELECT productos.*, 
            categorias.nombre AS categoria_nombre,
-           proveedores.nombre AS proveedor_nombre
+           categorias.deleted_at AS categoria_deleted_at,
+           proveedores.nombre AS proveedor_nombre,
+           proveedores.deleted_at AS proveedor_deleted_at
     FROM productos
     JOIN categorias ON productos.categoria_id = categorias.id
     JOIN proveedores ON productos.proveedor_id = proveedores.id
@@ -211,11 +257,12 @@ export const deleteProduct = async (
   const { id } = req.params
   
   try {
-    // First delete related movements
-    await conn.query('DELETE FROM movimientos WHERE producto_id = ?', [id])
-
-    // Then delete the product
-    const [row] = await conn.query<ResultSetHeader>('DELETE FROM productos WHERE id = ?', [id])
+    // Soft delete the product
+    const suffix = `_deleted_${Date.now()}`
+    const [row] = await conn.query<ResultSetHeader>(
+      'UPDATE productos SET deleted_at = NOW(), nombre = CONCAT(nombre, ?) WHERE id = ?',
+      [suffix, id]
+    )
 
     if (row.affectedRows === 0) {
       return res.status(404).json({ error: 'Product not found' })

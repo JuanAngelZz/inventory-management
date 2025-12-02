@@ -7,7 +7,7 @@ export const getCategories = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const query = 'SELECT * FROM categorias'
+  const query = 'SELECT * FROM categorias WHERE deleted_at IS NULL'
 
   try {
     const [categories] = await conn.query<RowDataPacket[]>(query)
@@ -80,7 +80,8 @@ export const deleteCategory = async (
   res: Response
 ): Promise<Response> => {
   const { id } = req.params
-  const query = 'DELETE FROM categorias WHERE id = ?'
+  const query =
+    "UPDATE categorias SET deleted_at = NOW(), nombre = CONCAT(nombre, '_deleted_', UNIX_TIMESTAMP()) WHERE id = ?"
 
   try {
     const [row] = await conn.query<ResultSetHeader>(query, [id])

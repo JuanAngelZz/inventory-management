@@ -29,6 +29,7 @@ export interface ProductStore {
   setSelectedProduct: (product: Product) => void
 
   getProducts: () => Promise<void>
+  getExpiringProducts: () => Promise<void>
   getProduct: (id: number) => Promise<void>
   createProduct: (product: Product) => Promise<void>
   updateProduct: (id: number, product: Product) => Promise<void>
