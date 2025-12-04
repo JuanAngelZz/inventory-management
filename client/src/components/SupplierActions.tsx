@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
 import { useState, useEffect } from 'react'
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogContent } from '@/components/ui/dialog'
 import UpdateSupplierForm from '@/components/UpdateSupplierForm'
 import DeleteDialog from '@/components/DeleteDialog'
 import useSupplierStore from '@/stores/supplierStore'
