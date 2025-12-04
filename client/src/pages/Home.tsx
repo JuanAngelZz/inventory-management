@@ -5,12 +5,14 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { triggerManualAlerts } from '@/api/alerts'
 import { useNavigate } from 'react-router-dom'
-import { 
-  Package, 
-  Users, 
-  AlertTriangle, 
-  TrendingUp, 
+import {
+  Package,
+  Users,
+  AlertTriangle,
+  TrendingUp,
   ArrowRight,
   Plus,
   Clock,
@@ -28,7 +30,7 @@ import { QuickSaleWidget } from '@/components/QuickSaleWidget'
 const Home = () => {
   const navigate = useNavigate()
   const { user } = useAuth()
-  
+
   const { data: stats, isLoading } = useQuery<DashboardStats>({
     queryKey: ['dashboardStats'],
     queryFn: getDashboardStats
@@ -64,42 +66,59 @@ const Home = () => {
 
   return (
     <div className="space-y-8">
-      <header>
-        <h1 className='text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100'>
-          Panel de Control
-        </h1>
-        <p className="text-muted-foreground mt-2">
-          Resumen de actividad en tiempo real
-        </p>
+      <header className="flex items-center justify-between">
+        <div>
+          <h1 className='text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100'>
+            Panel de Control
+          </h1>
+          <p className="text-muted-foreground mt-2">
+            Resumen de actividad en tiempo real
+          </p>
+        </div>
+        <Button
+          onClick={async () => {
+            try {
+              await triggerManualAlerts()
+              alert('Alertas enviadas correctamente')
+            } catch (error) {
+              alert('Error al enviar alertas')
+              console.error(error)
+            }
+          }}
+          variant="outline"
+          className="bg-white shadow-sm hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-slate-700"
+        >
+          Probar Alertas
+        </Button>
       </header>
 
       {/* Key Metrics Grid */}
       <section className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
-        <StatCard 
-          title="Ventas de Hoy" 
-          value={`$${stats?.kpis.todaysSales.toLocaleString()}`} 
-          description="Ingresos generados hoy" 
+        <StatCard
+          title="Ventas de Hoy"
+          value={`$${stats?.kpis.todaysSales.toLocaleString()}`}
+          description="Ingresos generados hoy"
           icon={DollarSign}
           color="#3b82f6" // blue-500
         />
-        <StatCard 
-          title="Valor del Inventario" 
+        <StatCard
+          title="Valor del Inventario"
           value={`$${stats?.kpis.totalRevenue.toLocaleString()}`} // Using totalRevenue as proxy for value for now, or we could calculate value if available
-          description="Valor estimado total" 
+          description="Valor estimado total"
           icon={TrendingUp}
           color="#10b981" // emerald-500
         />
-        <StatCard 
-          title="Alertas de Stock" 
-          value={stats?.kpis.lowStock} 
-          description="Productos por agotarse" 
+        <StatCard
+          title="Alertas de Stock"
+          value={stats?.kpis.lowStock}
+          description="Productos por agotarse"
           icon={AlertTriangle}
           color="#ef4444" // red-500
         />
-        <StatCard 
-          title="Productos Activos" 
-          value={stats?.kpis.totalProducts} 
-          description="Total en catálogo" 
+        <StatCard
+          title="Productos Activos"
+          value={stats?.kpis.totalProducts}
+          description="Total en catálogo"
           icon={Package}
           color="#8b5cf6" // violet-500
         />
@@ -123,11 +142,10 @@ const Home = () => {
             <div className="space-y-8">
               {stats?.recentActivity.map((activity) => (
                 <div key={activity.id} className="flex items-center">
-                  <div className={`flex h-9 w-9 items-center justify-center rounded-full border ${
-                    activity.tipo === 'entrada' 
-                      ? 'bg-green-100 border-green-200 text-green-600' 
-                      : 'bg-red-100 border-red-200 text-red-600'
-                  }`}>
+                  <div className={`flex h-9 w-9 items-center justify-center rounded-full border ${activity.tipo === 'entrada'
+                    ? 'bg-green-100 border-green-200 text-green-600'
+                    : 'bg-red-100 border-red-200 text-red-600'
+                    }`}>
                     {activity.tipo === 'entrada' ? <Plus className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
                   </div>
                   <div className="ml-4 space-y-1">
@@ -196,7 +214,7 @@ const Home = () => {
               </div>
             </CardContent>
           </Card>
-          
+
           {user.rol === 'administrador' && (
             <>
               <Card className="hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors cursor-pointer" onClick={() => navigate('/products/create')}>

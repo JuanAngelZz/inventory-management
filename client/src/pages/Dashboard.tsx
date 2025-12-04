@@ -28,7 +28,7 @@ const Dashboard = () => {
     <div className='flex h-screen w-full overflow-hidden bg-background'>
       {/* Mobile Sidebar Overlay */}
       {isMobileMenuOpen && (
-        <div 
+        <div
           className='fixed inset-0 z-40 bg-black/50 md:hidden'
           onClick={() => setIsMobileMenuOpen(false)}
         />

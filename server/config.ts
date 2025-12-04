@@ -6,3 +6,8 @@ export const DB_PASSWORD = process.env.DB_PASSWORD ?? ''
 export const DB_NAME = process.env.DB_DATABASE ?? 'ims_upt'
 export const DB_PORT = process.env.DB_PORT ?? 3306
 export const GOOGLE_GEN_AI_KEY = process.env.GOOGLE_GEN_AI_KEY ?? ''
+
+export const SMTP_HOST = process.env.SMTP_HOST
+export const SMTP_PORT = process.env.SMTP_PORT
+export const SMTP_USER = process.env.SMTP_USER
+export const SMTP_PASS = process.env.SMTP_PASS

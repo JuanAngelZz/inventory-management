@@ -12,4 +12,18 @@ export const startCronJobs = () => {
       console.error('Error en el respaldo automático:', error)
     }
   })
+
+  // Ejecutar verificación de alertas todos los días a las 8:00 PM (20:00)
+  cron.schedule('0 20 * * *', async () => {
+    console.log('Iniciando verificación de alertas...')
+    try {
+      await checkAndSendAlerts()
+      console.log('Verificación de alertas completada')
+    } catch (error) {
+      console.error('Error en la verificación de alertas:', error)
+    }
+  })
 }
+
+import { checkAndSendAlerts } from './controllers/alert.controller'
+

@@ -26,4 +26,7 @@ const startServer = async () => {
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 }
 
+import alertRoutes from './routes/alert.routes'
+app.use('/api/alerts', alertRoutes)
+
 startServer()
