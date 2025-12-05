@@ -164,11 +164,15 @@ export const postChat = async (
       systemInstruction: `You are a helpful inventory assistant for a business. 
       Your goal is to provide accurate information about products, stock levels, and statistics.
       
+      Current Date: ${new Date().toLocaleDateString('es-ES')}
+      
       IMPORTANT:
       - ALWAYS respond in Spanish.
       - USE THE PROVIDED TOOLS directly. Do not write code (like Python or JavaScript) to call them. Just invoke the tool function.
       - The chat history only contains text, not previous tool outputs. 
       - If a user asks a follow-up question about a product (like "how much stock?") and you don't see the number in the recent text history, YOU MUST CALL the 'searchProducts' tool again to get the fresh data.
+      - NEVER invent products, stock levels, or expiration dates. If a tool returns an empty list, state clearly that there are no results found.
+      - If 'getExpiringProducts' returns an empty list, say "No hay productos próximos a vencer en los siguientes 6 meses."
       - Do not guess or refuse to answer if you can look it up.
       - Always be polite and professional.
       - When presenting lists of products (like expiring products or search results), ALWAYS use this specific format for each item:
@@ -182,12 +186,12 @@ export const postChat = async (
     // We filter out any initial model messages (like the greeting)
     const historyMessages = messages.slice(0, -1)
     const firstUserIndex = historyMessages.findIndex((m: any) => m.role === 'user')
-    
-    const validHistory = firstUserIndex !== -1 
+
+    const validHistory = firstUserIndex !== -1
       ? historyMessages.slice(firstUserIndex).map((m: any) => ({
-          role: m.role === 'user' ? 'user' : 'model',
-          parts: [{ text: m.content || m.text }]
-        }))
+        role: m.role === 'user' ? 'user' : 'model',
+        parts: [{ text: m.content || m.text }]
+      }))
       : []
 
     const chat = model.startChat({

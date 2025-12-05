@@ -35,7 +35,7 @@ export const migrate = async (req: Request, res: Response) => {
 
 import { spawn } from 'child_process'
 import { createReadStream } from 'fs'
-import { DB_USER, DB_PASSWORD, DB_NAME } from '../config'
+import { DB_USER, DB_PASSWORD, DB_NAME, DB_HOST } from '../config'
 
 export const restoreBackup = async (req: Request, res: Response) => {
   if (!req.file) {
@@ -43,6 +43,14 @@ export const restoreBackup = async (req: Request, res: Response) => {
   }
 
   const filePath = req.file.path
+  let responseSent = false
+
+  const sendResponse = (code: number, body: any) => {
+    if (!responseSent) {
+      responseSent = true
+      res.status(code).json(body)
+    }
+  }
 
   try {
     // 1. Limpiar la base de datos actual antes de restaurar
@@ -57,37 +65,50 @@ export const restoreBackup = async (req: Request, res: Response) => {
         }
       }
       await connection.query('SET FOREIGN_KEY_CHECKS = 1')
+
+      // Asegurar que el usuario tenga el plugin de autenticación correcto
+      // Esto es necesario porque el cliente de mariadb en alpine no soporta caching_sha2_password por defecto
+      await connection.query(`ALTER USER '${DB_USER}'@'%' IDENTIFIED WITH mysql_native_password BY '${DB_PASSWORD}';`)
+      await connection.query('FLUSH PRIVILEGES;')
     } finally {
       connection.release()
     }
 
-    // 2. Usar docker exec para restaurar la base de datos
-    // Esto evita problemas de parsing de SQL en Node.js y problemas de encoding
-    const child = spawn('docker', [
-      'exec',
-      '-i',
-      'mysql-ims',
-      'mysql',
+    // 2. Usar mysql client para restaurar la base de datos
+    // Se conecta al host definido en DB_HOST
+    // Usamos --skip-ssl para evitar errores de certificado self-signed
+    // Usamos --get-server-public-key para permitir autenticación sha2 sin SSL
+    const args = [
+      `-h${DB_HOST}`,
       `-u${DB_USER}`,
       `-p${DB_PASSWORD}`,
+      '--skip-ssl',
       DB_NAME
-    ])
+    ]
+    console.log('INTENTO DE RESTAURACION (FIX FLAG): Ejecutando mysql con argumentos:', args.map(a => a.startsWith('-p') ? '-p*****' : a))
+
+    const child = spawn('mysql', args)
 
     const fileStream = createReadStream(filePath)
-    
+
     fileStream.pipe(child.stdin)
 
     child.stdin.on('error', (err) => {
-      console.error('Error en stdin de docker:', err)
+      console.error('Error en stdin de mysql:', err)
+      // No enviamos respuesta aquí, dejamos que el proceso falle y maneje el error en 'close' o 'error' del proceso
     })
 
     child.on('error', (err) => {
-      console.error('Error al ejecutar docker:', err)
-      res.status(500).json({ error: 'Error al ejecutar el proceso de restauración' })
+      console.error('Error al ejecutar mysql:', err)
+      sendResponse(500, { error: 'Error al ejecutar el proceso de restauración' })
     })
 
     child.stderr.on('data', (data) => {
-      console.error(`Docker stderr: ${data}`)
+      const message = data.toString()
+      // Ignorar advertencia de deprecación
+      if (!message.includes('Deprecated program name')) {
+        console.error(`Mysql stderr: ${message}`)
+      }
     })
 
     child.on('close', async (code) => {
@@ -99,10 +120,10 @@ export const restoreBackup = async (req: Request, res: Response) => {
       }
 
       if (code === 0) {
-        res.json({ message: 'Base de datos restaurada exitosamente' })
+        sendResponse(200, { message: 'Base de datos restaurada exitosamente' })
       } else {
         console.error(`Proceso de restauración terminó con código ${code}`)
-        res.status(500).json({ error: 'Error al restaurar la base de datos' })
+        sendResponse(500, { error: 'Error al restaurar la base de datos' })
       }
     })
 
@@ -113,8 +134,6 @@ export const restoreBackup = async (req: Request, res: Response) => {
     } catch (e) {
       console.error('Error al eliminar archivo temporal:', e)
     }
-    if (!res.headersSent) {
-      res.status(500).json({ error: 'Error al restaurar la base de datos' })
-    }
+    sendResponse(500, { error: 'Error al restaurar la base de datos' })
   }
 }

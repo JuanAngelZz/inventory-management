@@ -53,20 +53,20 @@ export default function ChatSupport() {
       // Prepare history for the API
       // The API expects { messages: [...] }
       const history = [...messages, userMessage];
-      
+
       const response = await sendMessage(history);
-      
-      const botMessage: Message = { 
-        role: 'model', 
-        content: response.response 
+
+      const botMessage: Message = {
+        role: 'model',
+        content: response.response
       };
-      
+
       setMessages(prev => [...prev, botMessage]);
     } catch (error) {
       console.error("Error sending message:", error);
-      setMessages(prev => [...prev, { 
-        role: 'model', 
-        content: 'Lo siento, hubo un error al procesar tu solicitud. Por favor intenta de nuevo.' 
+      setMessages(prev => [...prev, {
+        role: 'model',
+        content: 'Lo siento, hubo un error al procesar tu solicitud. Por favor intenta de nuevo.'
       }]);
     } finally {
       setIsLoading(false);
@@ -84,7 +84,7 @@ export default function ChatSupport() {
     <ExpandableChat size="lg" position="bottom-right">
       <ExpandableChatHeader className="flex-col text-center justify-center">
         <h1 className="text-xl font-semibold">Inventori‑Bot ✨</h1>
-        <p>Tu asistente para consultas de stock, reportes y más.</p>
+        <p>Tu asistente para consultas de stock.</p>
       </ExpandableChatHeader>
       <ExpandableChatBody>
         <ChatMessageList>
@@ -115,16 +115,16 @@ export default function ChatSupport() {
       </ExpandableChatBody>
       <ExpandableChatFooter className="bg-background/40">
         <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="relative flex items-center w-full">
-          <ChatInput 
+          <ChatInput
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Escribe tu consulta..."
             className="min-h-12 pr-12 resize-none rounded-xl border-border/50 bg-background/50 backdrop-blur-sm focus-visible:ring-1 focus-visible:ring-primary/30"
           />
-          <Button 
-            type="submit" 
-            size="icon" 
+          <Button
+            type="submit"
+            size="icon"
             onClick={handleSend}
             disabled={isLoading || !input.trim()}
             variant="ghost"
