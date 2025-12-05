@@ -179,8 +179,8 @@ const UpdateProductForm = ({ id, onClose }: UpdateFormProps) => {
                         >
                           {field.value
                             ? suppliers.find(
-                                (supplier) => supplier.nombre === field.value
-                              )?.nombre
+                              (supplier) => supplier.nombre === field.value
+                            )?.nombre
                             : 'Selecciona proveedor'}
                           <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
                         </Button>
@@ -229,7 +229,7 @@ const UpdateProductForm = ({ id, onClose }: UpdateFormProps) => {
               render={({ field }) => (
                 <>
                   <FormLabel htmlFor={field.name}>
-                    Precio de compra ($)
+                    Precio de compra por unidad ($)
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -254,7 +254,7 @@ const UpdateProductForm = ({ id, onClose }: UpdateFormProps) => {
               render={({ field }) => (
                 <>
                   <FormLabel htmlFor={field.name}>
-                    Precio de venta ($)
+                    Precio de venta por unidad ($)
                   </FormLabel>
                   <FormControl>
                     <Input

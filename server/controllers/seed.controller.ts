@@ -21,15 +21,11 @@ const getRandomDate = (monthsBack: number) => {
 
 // Data for seeding - Venezuelan Context
 const categories = [
-  'Víveres',
   'Charcutería',
   'Bebidas',
-  'Limpieza',
   'Chucherías',
   'Lácteos',
-  'Carnicería',
-  'Cuidado Personal',
-  'Hogar'
+  'Víveres'
 ]
 
 const suppliers = [
@@ -45,44 +41,57 @@ const suppliers = [
   { name: 'Farmatodo', type: 'Proveedor de Misceláneos', address: 'Av. Rómulo Gallegos, Caracas' }
 ]
 
-const users = ['Juan', 'María', 'Carlos', 'Ana', 'Luis', 'Sofía', 'Pedro', 'Laura', 'José', 'Elena']
+const users = ['Juan', 'María', 'Carlos', 'Pedro', 'Laura']
 
 const productsData = [
+  // Víveres
   { name: 'Harina P.A.N.', description: 'Harina de maíz precocida blanca', category: 'Víveres' },
   { name: 'Arroz Primor', description: 'Arroz blanco de mesa tipo I', category: 'Víveres' },
   { name: 'Pasta Mary', description: 'Pasta de sémola durum', category: 'Víveres' },
-  { name: 'Margarina Mavesa', description: 'Margarina con sal', category: 'Víveres' },
   { name: 'Mayonesa Kraft', description: 'Mayonesa real', category: 'Víveres' },
   { name: 'Salsa de Tomate Heinz', description: 'Ketchup clásico', category: 'Víveres' },
   { name: 'Diablitos Underwood', description: 'Jamón endiablado', category: 'Víveres' },
-  { name: 'Rikesa', description: 'Queso fundido tipo cheddar', category: 'Víveres' },
+  { name: 'Café Fama de América', description: 'Café molido clásico', category: 'Víveres' },
+  { name: 'Azúcar Montalbán', description: 'Azúcar refinada', category: 'Víveres' },
+  { name: 'Aceite Vatel', description: 'Aceite vegetal comestible', category: 'Víveres' },
+  { name: 'Atún Margarita', description: 'Atún en aceite vegetal', category: 'Víveres' },
+
+  // Charcutería
   { name: 'Queso Paisa', description: 'Queso blanco pasteurizado', category: 'Charcutería' },
   { name: 'Jamón Plumrose', description: 'Jamón cocido superior', category: 'Charcutería' },
   { name: 'Salchichas Viena', description: 'Salchichas tipo viena', category: 'Charcutería' },
+  { name: 'Chuleta Ahumada', description: 'Chuleta de cerdo ahumada', category: 'Charcutería' },
+  { name: 'Queso Amarillo Torondoy', description: 'Queso amarillo tipo gouda', category: 'Charcutería' },
+  { name: 'Mortadela Tapara', description: 'Mortadela especial', category: 'Charcutería' },
+
+  // Bebidas
   { name: 'Malta Polar', description: 'Bebida de malta', category: 'Bebidas' },
   { name: 'Frescolita', description: 'Refresco sabor a colita', category: 'Bebidas' },
   { name: 'Chinotto', description: 'Refresco sabor a limón', category: 'Bebidas' },
   { name: 'Pepsi', description: 'Refresco de cola negra', category: 'Bebidas' },
   { name: 'Jugo de Naranja', description: 'Jugo natural pasteurizado', category: 'Bebidas' },
   { name: 'Cerveza Polar Pilsen', description: 'Cerveza tipo pilsen', category: 'Bebidas' },
-  { name: 'Jabón Las Llaves', description: 'Jabón en panela azul', category: 'Limpieza' },
-  { name: 'Detergente Ace', description: 'Detergente en polvo', category: 'Limpieza' },
-  { name: 'Lavaplatos Axion', description: 'Crema lavaplatos', category: 'Limpieza' },
-  { name: 'Cloro Nevex', description: 'Blanqueador desinfectante', category: 'Limpieza' },
+  { name: 'Toddy', description: 'Bebida de chocolate en polvo', category: 'Bebidas' },
+  { name: 'Chicha El Chichero', description: 'Bebida de arroz y leche', category: 'Bebidas' },
+
+  // Chucherías
   { name: 'Pepito', description: 'Snack de queso', category: 'Chucherías' },
   { name: 'Cocosette', description: 'Galleta rellena de coco', category: 'Chucherías' },
   { name: 'Susy', description: 'Galleta rellena de chocolate', category: 'Chucherías' },
   { name: 'Toronto', description: 'Bombón de chocolate con avellana', category: 'Chucherías' },
   { name: 'Samba', description: 'Galleta cubierta de chocolate con fresa', category: 'Chucherías' },
   { name: 'Oreo', description: 'Galleta tipo sándwich de chocolate', category: 'Chucherías' },
+  { name: 'Pirulin', description: 'Barquillas rellenas de chocolate', category: 'Chucherías' },
+  { name: 'Ovomaltina', description: 'Crema de chocolate con malta', category: 'Chucherías' },
+  { name: 'Chocolate Savoy Leche', description: 'Tableta de chocolate con leche', category: 'Chucherías' },
+
+  // Lácteos
   { name: 'Leche en Polvo La Campiña', description: 'Leche completa en polvo', category: 'Lácteos' },
   { name: 'Yogurt Migurt', description: 'Yogurt batido de fresa', category: 'Lácteos' },
-  { name: 'Carne Molida', description: 'Carne de res de primera', category: 'Carnicería' },
-  { name: 'Pollo Entero', description: 'Pollo beneficiado fresco', category: 'Carnicería' },
-  { name: 'Chuleta Ahumada', description: 'Chuleta de cerdo ahumada', category: 'Carnicería' },
-  { name: 'Champú Head & Shoulders', description: 'Control caspa', category: 'Cuidado Personal' },
-  { name: 'Desodorante Mum', description: 'Desodorante en bolita', category: 'Cuidado Personal' },
-  { name: 'Papel Higiénico Rosal', description: 'Papel higiénico doble hoja', category: 'Hogar' }
+  { name: 'Rikesa', description: 'Queso fundido tipo cheddar', category: 'Lácteos' },
+  { name: 'Margarina Mavesa', description: 'Margarina con sal', category: 'Lácteos' },
+  { name: 'Mantequilla Maracay', description: 'Mantequilla con sal', category: 'Lácteos' },
+  { name: 'Leche Condensada Natulac', description: 'Leche condensada azucarada', category: 'Lácteos' }
 ]
 
 import fs from 'fs'
@@ -110,9 +119,9 @@ export const seed = async (req: Request, res: Response) => {
       const tableNames = ['movimientos', 'productos', 'proveedores', 'usuarios', 'categorias', 'codigos_telefono']
       for (const table of tableNames) {
         try {
-           await pool.query(`TRUNCATE TABLE ${table}`)
+          await pool.query(`TRUNCATE TABLE ${table}`)
         } catch (error) {
-           console.warn(`Could not truncate table ${table}, it might not exist.`)
+          console.warn(`Could not truncate table ${table}, it might not exist.`)
         }
       }
       await pool.query('SET FOREIGN_KEY_CHECKS=1')
@@ -207,7 +216,7 @@ export const seed = async (req: Request, res: Response) => {
       // 2. Generate Movements
       let currentStock = 0
       const numMovements = getRandomNumber(5, 20)
-      
+
       // Ensure at least one initial entry
       const initialEntryQty = getRandomNumber(50, 200)
       await pool.query(
@@ -220,7 +229,7 @@ export const seed = async (req: Request, res: Response) => {
       for (let i = 0; i < numMovements; i++) {
         const isEntry = Math.random() > 0.7 // 30% chance of restocking, 70% sales
         const moveDate = getRandomDate(5) // Movements in last 5 months
-        
+
         // Ensure date is after acquisition
         if (moveDate < acquisitionDate) continue
 
@@ -235,7 +244,7 @@ export const seed = async (req: Request, res: Response) => {
           // Sale
           const qty = getRandomNumber(1, 10)
           if (currentStock >= qty) {
-             await pool.query(
+            await pool.query(
               'INSERT INTO movimientos (tipo, cantidad, fecha, producto_id) VALUES (?, ?, ?, ?)',
               ['salida', qty, moveDate, productId]
             )

@@ -18,12 +18,12 @@ export const productSchema = z.object({
     .number({
       required_error: 'El atributo "precio_compra" es requerido'
     })
-    .min(0.01, 'El precio de compra debe ser mayor a 0'),
+    .min(0.01, 'El Precio de compra por unidad debe ser mayor a 0'),
   precio_venta: z
     .number({
       required_error: 'El atributo "precio_venta" es requerido'
     })
-    .min(0.01, 'El precio de venta debe ser mayor a 0'),
+    .min(0.01, 'El Precio de venta por unidad debe ser mayor a 0'),
   fecha_adquisicion: z.date().default(new Date()),
   fecha_vencimiento: z.date({
     required_error: 'El atributo "fecha_vencimiento" es requerido'

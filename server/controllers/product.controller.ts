@@ -125,32 +125,39 @@ export const createProduct = async (
   const category = body.categoria_nombre
   const supplier = body.proveedor_nombre
 
+  const connection = await conn.getConnection()
+
   try {
+    await connection.beginTransaction()
+
     // 1. Verificar si el producto ya existe
-    const [existingProduct] = await conn.query<RowDataPacket[]>(
+    const [existingProduct] = await connection.query<RowDataPacket[]>(
       'SELECT id FROM productos WHERE nombre = ?',
       [body.nombre]
     )
 
     if (existingProduct.length > 0) {
+      await connection.rollback()
       return res.status(409).json({ error: 'El producto ya existe' })
     }
 
-    const [rows] = await conn.query<RowDataPacket[]>(
+    const [rows] = await connection.query<RowDataPacket[]>(
       'SELECT * FROM categorias WHERE nombre = ?',
       [category]
     )
 
     if (rows.length === 0) {
+      await connection.rollback()
       return res.status(404).json({ error: 'Category not found' })
     }
 
-    const [rows2] = await conn.query<RowDataPacket[]>(
+    const [rows2] = await connection.query<RowDataPacket[]>(
       'SELECT * FROM proveedores WHERE nombre = ?',
       [supplier]
     )
 
     if (rows2.length === 0) {
+      await connection.rollback()
       return res.status(404).json({ error: 'Supplier not found' })
     }
 
@@ -167,12 +174,29 @@ export const createProduct = async (
     }
 
     const query = 'INSERT INTO productos SET ?'
-    await conn.query<RowDataPacket[]>(query, product)
+    const [result] = await connection.query<ResultSetHeader>(query, product)
+    const productId = result.insertId
+
+    // Crear movimiento inicial si hay stock
+    if (body.stock > 0) {
+      const movement = {
+        tipo: 'entrada',
+        cantidad: body.stock,
+        fecha: format(new Date(), 'YYYY-MM-DD HH:mm'),
+        producto_id: productId
+      }
+      await connection.query('INSERT INTO movimientos SET ?', movement)
+    }
+
+    await connection.commit()
 
     return res.sendStatus(201)
   } catch (error) {
+    await connection.rollback()
     console.error(error)
     return res.status(500).json({ error })
+  } finally {
+    connection.release()
   }
 }
 
@@ -255,7 +279,7 @@ export const deleteProduct = async (
   res: Response
 ): Promise<Response> => {
   const { id } = req.params
-  
+
   try {
     // Soft delete the product
     const suffix = `_deleted_${Date.now()}`
